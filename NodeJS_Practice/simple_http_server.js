@@ -2,6 +2,14 @@ import * as http from "node:http";
 import * as fsPromise from "node:fs/promises";
 import { pipeline } from "node:stream";
 
+const MIME_TYPES = new Map([
+  ["css", "text/css"],
+  ["js", "text/javascript"],
+  ["png", "image/png"],
+  ["html", "text/html"],
+  ["txt", "text/plain"],
+]);
+
 const httpServer = http.createServer(); // we can request listener here...
 
 httpServer.on("request", (req, res) => {
@@ -20,6 +28,7 @@ httpServer.on("request", (req, res) => {
     console.log("Request successfully recieved!!!");
     // Now we can Write something to response here...
 
+    // Handling / Route********************
     if (req.method === "GET" && req.url === "/") {
       res.setHeaders(
         new Map([
@@ -42,48 +51,22 @@ httpServer.on("request", (req, res) => {
           }
         });
       }
-    } else if (req.method === "GET" && req.url === "/styles.css") {
-      res.setHeaders(new Map([["Content-Type", "text/css"]]));
-      res.statusCode = 200;
-      {
-        // Pipe and Pipeline will cleanup all the resources once the pipe is Done. So Create Resources in it's scope itself.
-        const fileHandle = await fsPromise.open("../assets/styles.css", "r");
-        const fileReadStream = fileHandle.createReadStream();
-        pipeline(fileReadStream, res, (error) => {
-          if (error) {
-            console.log("Error in writing Response", error);
-          } else {
-            console.log(
-              `File is Written to Response!!! && Response reached Client && Resourses is closed automatically by pipeline`
-            );
-          }
-        });
-      }
-    } else if (req.method === "GET" && req.url === "/favicon.ico") {
-      res.setHeaders(new Map([["Content-Type", "image/png"]]));
-      res.statusCode = 200;
+    }
 
-      {
-        // Pipe and Pipeline will cleanup all the resources once the pipe is Done. So Create Resources in it's scope itself.
-        const fileHandle = await fsPromise.open("../assets/favicon.png", "r");
-        const fileReadStream = fileHandle.createReadStream();
-        pipeline(fileReadStream, res, (error) => {
-          if (error) {
-            console.log("Error in writing Response", error);
-          } else {
-            console.log(
-              `File is Written to Response!!! && Response reached Client && Resourses is closed automatically by pipeline`
-            );
-          }
-        });
-      }
-    } else if (req.method === "GET" && req.url === "/index.js") {
-      res.setHeaders(new Map([["Content-Type", "text/javascript"]]));
+    // Load Assets*************************
+    else if (req.method === "GET" && req.url.includes("/assets/")) {
+      res.setHeaders(
+        new Map([
+          [
+            "Content-Type",
+            MIME_TYPES.get(req.url.slice(req.url.lastIndexOf(".") + 1)),
+          ],
+        ])
+      );
       res.statusCode = 200;
-
       {
         // Pipe and Pipeline will cleanup all the resources once the pipe is Done. So Create Resources in it's scope itself.
-        const fileHandle = await fsPromise.open("../assets/index.js", "r");
+        const fileHandle = await fsPromise.open(`..${req.url}`, "r");
         const fileReadStream = fileHandle.createReadStream();
         pipeline(fileReadStream, res, (error) => {
           if (error) {
