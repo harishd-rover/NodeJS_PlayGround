@@ -10,9 +10,11 @@ const MIME_TYPES = new Map([
   ["txt", "text/plain"],
 ]);
 
+let dataChunks = [];
+
 const httpServer = http.createServer(); // we can request listener here...
 
-httpServer.on("request", (req, res) => {
+httpServer.on("request", async (req, res) => {
   console.log("Http Request Line:--------- ");
   console.log(req.method, req.url, req.httpVersion);
 
@@ -20,9 +22,16 @@ httpServer.on("request", (req, res) => {
   console.log(req.headers);
 
   console.log("Http Simple Request Body:-------");
-  req.on("data", (buffer) => {
-    console.log(buffer.toString());
-  });
+  // Read only when/where it's needed.
+  // req.on("data", (chunk) => {
+  //   dataChunks.push(chunk);
+  // });
+  dataChunks = [];
+  (async () => {
+    for await (const chunk of req) {
+      dataChunks.push(chunk);
+    }
+  })();
 
   req.on("end", async () => {
     console.log("Request successfully recieved!!!");
@@ -77,6 +86,25 @@ httpServer.on("request", (req, res) => {
             );
           }
         });
+      }
+    }
+    // Json Route
+    else if (req.url === "/login" && req.method === "POST") {
+      // perform authentification Here...
+      const { username, password } = JSON.parse(
+        Buffer.concat(dataChunks).toString()
+      );
+      if (username === "harish" && password === "123") {
+        res.statusCode = 200;
+        res.setHeader("Content-Type", "application/json");
+        const resBody = {
+          username: username,
+          status: "LoggedIn",
+        };
+        res.end(JSON.stringify(resBody));
+      } else {
+        res.statusCode = 401;
+        res.end("Invalid User!!!");
       }
     } else {
       res.statusCode = 400;
