@@ -116,6 +116,7 @@ httpServer.on("request", async (req, res) => {
     // Json Route
     else if (req.url === "/login" && req.method === "POST") {
       // perform authentification Here...
+      console.log(Buffer.concat(dataChunks).toString())
       const { username, password } = JSON.parse(
         Buffer.concat(dataChunks).toString()
       );
