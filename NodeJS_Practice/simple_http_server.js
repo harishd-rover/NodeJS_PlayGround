@@ -1,11 +1,13 @@
 import * as http from "node:http";
 import * as fsPromise from "node:fs/promises";
 import { pipeline } from "node:stream";
+import * as path from "node:path";
 
 const MIME_TYPES = new Map([
   ["css", "text/css"],
   ["js", "text/javascript"],
   ["png", "image/png"],
+  ["jpg", "image/jpg"],
   ["html", "text/html"],
   ["txt", "text/plain"],
 ]);
@@ -21,20 +23,38 @@ httpServer.on("request", async (req, res) => {
   console.log("Http Request Headers:---------- ");
   console.log(req.headers);
 
-  console.log("Http Simple Request Body:-------");
-  // Read only when/where it's needed.
-  // req.on("data", (chunk) => {
-  //   dataChunks.push(chunk);
-  // });
-  dataChunks = [];
-  (async () => {
-    for await (const chunk of req) {
-      dataChunks.push(chunk);
-    }
-  })();
+  //? in ES6 Modules __dirname ==>> import.meta.dirname  ==>> directory path of this File.
+  //? in ES6 Modules __filename ==>> import.meta.filename ==>> file path of this File.
+  if (req.url === "/uploadJpg" && req.method === "PUT") {
+    const uploadPath = path.join(import.meta.dirname, "../assets/upload.jpg");
+    const fileHandle = await fsPromise.open(uploadPath, "w");
+    const writeStream = fileHandle.createWriteStream();
+    pipeline(req, writeStream, (error) => {
+      if (error) {
+        console.log("Error Happened while Upload!!!", error);
+      } else {
+        res.end(`File Uploaded Successfully to : ${uploadPath}`);
+      }
+    });
+    return;
+  } else {
+    // Don't read here incase of File Upload
+    console.log("Http Simple Request Body:-------");
+    // Read only when/where it's needed.
+    // req.on("data", (chunk) => {
+    //   dataChunks.push(chunk);
+    // });
+    dataChunks = [];
+    (async () => {
+      for await (const chunk of req) {
+        dataChunks.push(chunk);
+      }
+      // make sure you don't perform anything here... related to saving chunks
+    })();
+  }
 
   req.on("end", async () => {
-    console.log("Request successfully recieved!!!");
+    console.log("Request successfully read!!!");
     // Now we can Write something to response here...
 
     // Handling / Route********************
@@ -48,7 +68,11 @@ httpServer.on("request", async (req, res) => {
       res.statusCode = 200;
       {
         // Pipe and Pipeline will cleanup all the resources once the pipe is Done. So Create Resources in it's scope itself.
-        const fileHandle = await fsPromise.open("../assets/index.html", "r");
+        const indexHtmlPath = path.join(
+          import.meta.dirname,
+          "../assets/index.html"
+        );
+        const fileHandle = await fsPromise.open(indexHtmlPath, "r");
         const fileReadStream = fileHandle.createReadStream();
         pipeline(fileReadStream, res, (error) => {
           if (error) {
@@ -75,7 +99,8 @@ httpServer.on("request", async (req, res) => {
       res.statusCode = 200;
       {
         // Pipe and Pipeline will cleanup all the resources once the pipe is Done. So Create Resources in it's scope itself.
-        const fileHandle = await fsPromise.open(`..${req.url}`, "r");
+        const assetsfilePath = path.join(import.meta.dirname, "../", req.url);
+        const fileHandle = await fsPromise.open(assetsfilePath, "r");
         const fileReadStream = fileHandle.createReadStream();
         pipeline(fileReadStream, res, (error) => {
           if (error) {

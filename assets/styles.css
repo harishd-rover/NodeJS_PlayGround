@@ -57,10 +57,11 @@ a {
   padding: 10px;
   border: 1px solid;
   margin: 10px auto;
-  width: 100px;
   color: white;
   background-color: deepskyblue;
   text-decoration: none;
+  max-width: fit-content;
+  min-width: 100px;
 }
 
 a:hover {
