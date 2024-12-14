@@ -80,17 +80,18 @@ console.log(path.resolve(__dirname, "/path"));
 console.log(path.resolve(__dirname, "./path"));
 console.log(path.resolve(__dirname, "../path"));
 
-Output:*****************
+?Output:*****************
 
-path.join()***********
+* path.join()***********
 /home/user/some/other/segments/path
 /home/user/some/other/segments/path
 /home/user/some/other/segments/path
 /home/user/some/other/path
 
-path.resolve()********
+* path.resolve()********
 /home/user/some/other/segments/path
 /path
 /home/user/some/other/segments/path
 /home/user/some/other/path
+
 */
