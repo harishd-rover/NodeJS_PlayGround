@@ -116,7 +116,7 @@ httpServer.on("request", async (req, res) => {
     // Json Route
     else if (req.url === "/login" && req.method === "POST") {
       // perform authentification Here...
-      console.log(Buffer.concat(dataChunks).toString())
+      console.log(Buffer.concat(dataChunks).toString());
       const { username, password } = JSON.parse(
         Buffer.concat(dataChunks).toString()
       );
@@ -152,6 +152,7 @@ httpServer.on("request", async (req, res) => {
     console.log("Res: Stream End !!!");
   });
 
+  // these Socket Events makes sense, when we send multiple simultanious requests with keep-alive/close Agent
   res.socket.on("close", () => {
     console.log("Socket Conenction Closed!!!");
   });
