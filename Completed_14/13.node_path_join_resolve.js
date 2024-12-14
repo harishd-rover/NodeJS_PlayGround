@@ -12,11 +12,11 @@ console.log(import.meta.filename);
 
 import * as path from "node:path";
 console.log(path.resolve() === process.cwd());
-// path.resolve() => prints current working Directory
+// path.resolve() => prints current working Directory(cwd())
 
 // ? Difference between Path.join() and path.resolve().
-// When we are using the __dirname/__filename(Absolute paths) as a first path.
-// both path.resolve() and path.join() will return the same.
+// When we are using the __dirname/__filename(Absolute paths) as a first path segment.
+// both path.resolve() and path.join() will return the same No issues in using interchangebly.
 
 console.log(
   "Path-Resolve:",
@@ -61,13 +61,17 @@ console.log("*****************************************");
 
 // ? Difference between Path.join() and path.resolve().
 
-//* Join will just joins the paths we provided. just like a relative path.
-console.log(`Join => 'harish','desktop','myprogram.js'`);
-console.log(path.join("harish", "desktop", "myprogram.js"), "\n");
+//* Join will just joins/concatinates the paths we provided. just like a relative path. returns relative path.
+console.log(`Join => '/harish','/desktop','myprogram.js'`);
+console.log(path.join("/harish", "/desktop", "myprogram.js"), "\n");
 
-//* Resolve will resolves the paths wrt the cwd() of the process if we dont provide a absolute path. if we provide absolute path it resolves wrt it.
+//* Resolve will resolves the path segments wrt the cwd() of the process if we don't provide any absolute path segment.
+//* if we provide absolute path segment it resolves wrt it.
+//* when we don't specify any absolute path segments it returns an absolute path.
 console.log(`Resolve => 'harish','desktop','myprogram.js'`);
-console.log(path.resolve("harish", "desktop", "myprogram.js"));
+console.log(path.resolve("harish", "desktop", "myprogram.js"), "\n");
+console.log(`Resolve => '/harish','desktop','myprogram.js'`);
+console.log(path.resolve("/harish", "desktop", "myprogram.js"), "\n");
 
 /*
 console.log(path.join(__dirname, "path"));
@@ -95,3 +99,6 @@ console.log(path.resolve(__dirname, "../path"));
 /home/user/some/other/path
 
 */
+
+console.log(path.join("home", "address"));
+console.log(path.resolve("home", "address"));
