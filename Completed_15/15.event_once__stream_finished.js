@@ -19,18 +19,18 @@ fileReadStream.pipe(fileWriteStream);
 //   console.log('Reading Done')
 // })
 
-// (async () => {
-//   await events.once(fileReadStream, "end");
-//   console.log("Reading Done!!!");
-// })();
+(async () => {
+  await events.once(fileReadStream, "end");
+  console.log("Reading Done!!!");
+})();
 
-stream.finished(fileReadStream, (error) => {
-  if (error) {
-    console.log(error.message);
-  } else {
-    console.log("Reading Done!!!");
-  }
-});
+// stream.finished(fileReadStream, (error) => {
+//   if (error) {
+//     console.log(error.message);
+//   } else {
+//     console.log("Reading Done!!!");
+//   }
+// });
 
 //* Alternative way to handle Writable 'finished' event
 
