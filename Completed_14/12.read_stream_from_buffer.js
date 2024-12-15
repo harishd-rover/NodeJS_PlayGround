@@ -25,8 +25,8 @@ console.log(readStream.read()); // returns Null if no data available in internal
 console.log("===============================================");
 
 //* Quick Solution :- 
-// We can stream.push(hugeBuffer) to the internal buffer at once and 
-// we can stream.read(chunkSize < sizeOfHugeBuffer) to read in chunks. untill the stream.read() returns null.
+//? We can stream.push(hugeBuffer) to the internal buffer at once and 
+//? we can stream.read(chunkSize < sizeOfHugeBuffer) to read in chunks. untill the stream.read() returns null.
 
 
 
@@ -95,7 +95,9 @@ const readStreamFromBuffer = new ReadableFromBuffer(hugeBuffer);
 //? we can demonstrate the same below.
 readStreamFromBuffer.read(); //? reading internal buffer first it calls the _read() method to fill the internal buffer for next read.
 setTimeout(() => {
-  // Giving the enough CPU Time to (_read()) / to refill the internal buffer by using intervals and timers or by mocking Asynchronacy.
+  //! Giving the enough CPU Time to (_read()) / to refill the internal buffer by using intervals and timers or by mocking Asynchronacy.
+  //! It's always recommended to use "process.nextTick(cb)" or "setImmediate(cb)" in these kind of situations.
+
   let i = 1;
   const interval = setInterval(() => {
     const data = readStreamFromBuffer.read();
@@ -113,7 +115,7 @@ setTimeout(() => {
 
 //* using for...await of loop.
 // let i = 1;
-// readStreamFromBuffer.setEncoding("utf-8");
+//* readStreamFromBuffer.setEncoding("utf-8");
 // for await (const data of readStreamFromBuffer) {
 //   console.log(i++, data);
 // }
