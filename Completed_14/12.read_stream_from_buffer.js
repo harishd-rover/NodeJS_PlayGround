@@ -24,7 +24,9 @@ console.log(readStream.read()); // returns Null if no data available in internal
 
 console.log("===============================================");
 
-
+//* Quick Solution :- 
+// We can stream.push(buffer) the huge buffer to the internal buffer at once and 
+// we can stream.read(chunkSize < sizeofbuffer) to read the chunks. untill the stream.read() returns null.
 
 
 
