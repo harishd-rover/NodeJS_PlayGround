@@ -24,13 +24,23 @@ console.log(readStream.read()); // returns Null if no data available in internal
 
 console.log("===============================================");
 
-//* Lets create a Huge Buffer from a File
+
+
+
+
+
+
+
+
+
+//* Lets create a Huge Buffer from a File*********************************************
+
 let pathToFile = path.resolve(import.meta.dirname, "../assets/download.txt");
 const hugeBuffer = await fs.readFile(pathToFile);
 
-//const readStream = Readable.from(hugeBuffer); //* it creates huge single chunk if we pass the buffer/data.
+//const readStream = Readable.from(hugeBuffer); //* it creates huge single chunk, if we pass the buffer/data.
 
-//* Creating the custom Readable Stream to read Huge Buffer.
+//* Creating the Custom ReadableStream to stream the Huge Buffer in chunks.
 class ReadableFromBuffer extends Readable {
   constructor(inputBuffer) {
     super({ highWaterMark: 7 });
@@ -68,22 +78,27 @@ class ReadableFromBuffer extends Readable {
 const readStreamFromBuffer = new ReadableFromBuffer(hugeBuffer);
 
 //************ reading the ReadStream using .read() **********************/
-//? when we call the stream.read(), stream.on('data'), stream.pipe()  -> readStream gets into flowing Mode.
 
-//? console.log(readStreamFromBuffer.read()); ==> null // it reads the internal buffer first and puts the stream into flowing Mode and exits, as noone is listening to the data events.
-//? it returns null in first .read() call as internal buffer is empty at that time.
+//? Stream.read() => it reads the internal buffer first and calls the _read() method of the stream to fill the internal buffer and exits, as noone is listening to the data events. and as the stream is not in flowing state.
+
+//? console.log(readStreamFromBuffer.read()); ==> null
+//? it returns null in first stream.read() call as internal buffer is empty at that time.
+
+//! when we call the read() method synchronously and repeatedly , the _read() won't get enough CPU time to fill the internal buffer (as main thread is blocked)
+
+//! when we call the stream.on('data'), stream.pipe(), (for...await of)  -> readStream gets into flowing Mode. These are all kind of asynchronous handlers. so _read() will get enough CPU Time there.
+
+//? calling stream.read() ==> Reads the internal buffer first and calls _read() to fill the internal buffer for next stream.read() call.
 
 //? we can demonstrate the same below.
-readStreamFromBuffer.read(); //? reading internal buffer first AND putting the stream into flowing state i/e it calls the _read() method to fill the internal buffer.
-
-//? calling stream.read() ==> reads the internal buffer first and calls _read() to fill the internal buffer for next stream.read() call.
-
+readStreamFromBuffer.read(); //? reading internal buffer first it calls the _read() method to fill the internal buffer for next read.
 setTimeout(() => {
+  // Giving the enough CPU Time to (_read()) / to refill the internal buffer by using intervals and timers or by mocking Asynchronacy.
   let i = 1;
   const interval = setInterval(() => {
     const data = readStreamFromBuffer.read();
     if (data) console.log(i++, data.toString());
-    // if data available print it. else stop reading.
+    // if data available, print it. else stop reading.
     else clearInterval(interval); // once the stream is ended, stop reading.
   }, 1000);
 }, 1100); // after 1 secand, data is available in the internal buffer.
