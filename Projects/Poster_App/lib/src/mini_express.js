@@ -1,5 +1,8 @@
 import http from "node:http";
 import path from "node:path";
+import fsPromises from "node:fs/promises";
+import { pipeline } from "node:stream";
+import { MIME_TYPES } from "./mime_types.js";
 
 export default class MiniExpress {
   httpServer = null;
@@ -20,17 +23,29 @@ export default class MiniExpress {
         return res;
       };
 
-      res.sendFile = (relativePath)=>{
-        // const absPath1 = path.resolve(relativePath);
-        // const absPath2 = path.resolve('../public/');
+      res.sendFile = async (relativePath) => {
+        const extName = path.extname(relativePath);
+        const mime_type = MIME_TYPES.get(extName);
+        res.setHeader("Content-Type", mime_type);
+        
+        const fileReadStream = (
+          await fsPromises.open(relativePath)
+        ).createReadStream();
 
-        // path.relative()
-      }
+        pipeline(fileReadStream, res, (err) => {
+          if (err) {
+            console.log(err.message);
+          }
+          {
+            console.log("File Successfully Sent");
+          }
+        });
+      };
 
       // Validating and Invoking registered Routes
       const activeRoute = req.method.toLowerCase() + "_" + req.url;
       if (!this.routesMap.has(activeRoute)) {
-        res.status(404).json({ error: "Invalid route" });
+        res.status(404).json({ error: "Invalid Route" });
       } else {
         this.routesMap.get(activeRoute)(req, res);
       }
