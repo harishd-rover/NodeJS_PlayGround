@@ -6,3 +6,12 @@ export async function bodyFromRequest(req) {
   }
   return JSON.parse(body);
 }
+
+export function getCookieValue(rawCookies, key) {
+  return (
+    rawCookies
+      ?.split(";")
+      ?.find((cookie) => cookie.trim().startsWith(key + "="))
+      ?.split("=")[1] ?? " _ "
+  );
+}

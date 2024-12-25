@@ -1,8 +1,9 @@
 import MiniExpress from "../../lib/src/mini_express.js";
 import { posts, users } from "./model.data.js";
-import { bodyFromRequest } from "./util.js";
+import { bodyFromRequest, getCookieValue } from "./util.js";
 
 const app = new MiniExpress();
+const AUTH_COOKIE = "posterAuth";
 
 app.route("get", "/", (req, res) => {
   res.sendFile("../../public/index.html");
@@ -27,19 +28,24 @@ app.route("get", "/styles.css", (req, res) => {
 
 app.route("post", "/api/login", async (req, res) => {
   const { username, password } = await bodyFromRequest(req);
+
   const currentUser = users.find((user) => user.username === username);
+
   if (!currentUser) {
-    res.status(401).json({ error: "Invalid User" });
+    res.status(401).json({ error: "Invalid Username" });
     return;
   }
+
   if (currentUser.password !== password) {
     res.status(401).json({ error: "Invalid Password" });
     return;
   }
+
   res.setHeader(
     "Set-Cookie",
-    `posterAuth=${currentUser.username}_${currentUser.password}`
+    `posterAuth=${currentUser.username}_${currentUser.password};httpOnly;`
   );
+
   res.status(200).json({ message: "Logged in!!!" });
 });
 
@@ -53,37 +59,52 @@ app.route("get", "/api/posts", (req, res) => {
 });
 
 app.route("get", "/api/user", (req, res) => {
-  if (req.headers.cookie) {
-    const [username, password] = req.headers.cookie.split("=")[1].split("_");
-    const currentUser = users.find(
-      (user) => user.username === username && user.password === password
-    );
-    if (currentUser) {
-      res.status(200).json({ ...currentUser, password: null });
-      return;
-    }
-  }
-  res.status(401).json({ error: "Login Error, please login again" });
-});
+  const [username, password] = getCookieValue(
+    req.headers.cookie,
+    AUTH_COOKIE
+  )?.split("_");
 
-app.route("delete", "/api/logout", (req, res) => {
-  const [username, password] = req.headers.cookie.split("=")[1].split("_");
   const currentUser = users.find(
     (user) => user.username === username && user.password === password
   );
+
+  if (currentUser) {
+    res.status(200).json(currentUser);
+    return;
+  }
+
+  res.status(401).json({ error: "UnAuthorized User. Login again" });
+});
+
+app.route("delete", "/api/logout", (req, res) => {
+  const [username, password] = getCookieValue(
+    req.headers.cookie,
+    AUTH_COOKIE
+  )?.split("_");
+
+  const currentUser = users.find(
+    (user) => user.username === username && user.password === password
+  );
+
   if (!currentUser) {
     res.status(401).json({ error: "Login Error, please login again" });
     return;
   }
+
   res.setHeader("Set-Cookie", `posterAuth=;Max-Age=0`);
   res.status(200).json({ message: "Logged Out" });
 });
 
 app.route("post", "/api/posts", async (req, res) => {
-  const [username, password] = req.headers.cookie.split("=")[1].split("_");
+  const [username, password] = getCookieValue(
+    req.headers.cookie,
+    AUTH_COOKIE
+  )?.split("_");
+
   const currentUser = users.find(
     (user) => user.username === username && user.password === password
   );
+
   if (!currentUser) {
     res.status(401).json({ error: "Login Error, please login again" });
     return;
@@ -107,36 +128,39 @@ app.route("post", "/api/posts", async (req, res) => {
 });
 
 app.route("put", "/api/user", async (req, res) => {
-  if (req.headers.cookie) {
-    const [username, password] = req.headers.cookie.split("=")[1].split("_");
+  const [username, password] = getCookieValue(
+    req.headers.cookie,
+    AUTH_COOKIE
+  )?.split("_");
 
-    const currentUserIndex = users.findIndex(
-      (user) => user.username === username && user.password === password
-    );
+  const currentUserIndex = users.findIndex(
+    (user) => user.username === username && user.password === password
+  );
 
+  if (currentUserIndex >= 0) {
     const currentUser = users[currentUserIndex];
-    if (currentUserIndex >= 0) {
-      const {
-        name: modName,
-        username: modUsername,
-        password: modPassword,
-      } = await bodyFromRequest(req);
-      
-      const modifiedUser = {
-        ...currentUser,
-        name: modName || currentUser.name,
-        username: modUsername || currentUser.username,
-        password: modPassword || currentUser.password,
-      };
-      users.splice(currentUserIndex, 1, modifiedUser);
-      // change cookie
-      res.setHeader(
-        "Set-Cookie",
-        `posterAuth=${modifiedUser.username}_${modifiedUser.password}`
-      );
-      res.status(200).json({ updatedUser: modifiedUser });
-      return;
-    }
+
+    const {
+      name: modName,
+      username: modUsername,
+      password: modPassword,
+    } = await bodyFromRequest(req);
+
+    const modifiedUser = {
+      ...currentUser,
+      name: modName || currentUser.name,
+      username: modUsername || currentUser.username,
+      password: modPassword || currentUser.password,
+    };
+
+    users.splice(currentUserIndex, 1, modifiedUser);
+    // change cookie
+    res.setHeader(
+      "Set-Cookie",
+      `posterAuth=${modifiedUser.username}_${modifiedUser.password};httpOnly;`
+    );
+    res.status(200).json({ updatedUser: modifiedUser });
+    return;
   }
 
   res.status(401).json({ error: "Invalid User, please login again" });
