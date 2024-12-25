@@ -7,6 +7,15 @@ const app = new MiniExpress();
 app.route("get", "/", (req, res) => {
   res.sendFile("../../public/index.html");
 });
+app.route("get", "/login", (req, res) => {
+  res.sendFile("../../public/index.html");
+});
+app.route("get", "/profile", (req, res) => {
+  res.sendFile("../../public/index.html");
+});
+app.route("get", "/new-post", (req, res) => {
+  res.sendFile("../../public/index.html");
+});
 
 app.route("get", "/scripts.js", (req, res) => {
   res.sendFile("../../public/scripts.js");
@@ -45,7 +54,6 @@ app.route("get", "/api/posts", (req, res) => {
 
 app.route("get", "/api/user", (req, res) => {
   if (req.headers.cookie) {
-    console.log(req.headers.cookie)
     const [username, password] = req.headers.cookie.split("=")[1].split("_");
     const currentUser = users.find(
       (user) => user.username === username && user.password === password
@@ -113,9 +121,7 @@ app.route("put", "/api/user", async (req, res) => {
         username: modUsername,
         password: modPassword,
       } = await bodyFromRequest(req);
-
-      console.log(modName, modUsername, modPassword);
-
+      
       const modifiedUser = {
         ...currentUser,
         name: modName || currentUser.name,
