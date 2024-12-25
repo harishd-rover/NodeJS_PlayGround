@@ -136,6 +136,6 @@ app.route("put", "/api/user", async (req, res) => {
   res.status(401).json({ error: "Invalid User, please login again" });
 });
 
-app.listen(3000, () => {
-  console.log("Server listening on 3000");
+app.listen(process.env.PORT ?? 3000, () => {
+  console.log("Server listening on", process.env.PORT);
 });

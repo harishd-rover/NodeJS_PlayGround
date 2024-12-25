@@ -13,6 +13,10 @@ export default class MiniExpress {
 
     this.httpServer.on("request", (req, res) => {
       // Attaching Response Methods
+      if(process.env.SERVER_NAME){
+        console.log(req.method, req.url ,"Request on", process.env.SERVER_NAME)
+      }
+
       res.json = (jsonObj) => {
         res.setHeader("content-type", "application/json");
         res.end(JSON.stringify(jsonObj));
