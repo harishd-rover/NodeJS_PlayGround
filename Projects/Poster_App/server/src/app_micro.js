@@ -1,4 +1,4 @@
-import MiniExpress from "../../lib/src/mini_express.js";
+import MiniExpress from "../../lib/src/micro_express.js";
 import { posts, users } from "./model.data.js";
 import { bodyFromRequest, getCookieValue } from "./util.js";
 
