@@ -7,24 +7,12 @@ import { MIME_TYPES } from "./mime_types.js";
 export default class MiniExpress {
   _server = null;
   _routeMap = new Map();
+  _middlewares = [];
 
   constructor() {
     this._server = http.createServer();
 
-    // Logging for Debugging.
     this._server.on("request", (req, res) => {
-      if (process.env.SERVER_NAME) {
-        console.log(
-          "Processing",
-          req.method,
-          req.url,
-          "on",
-          process.env.SERVER_NAME
-        );
-      } else {
-        console.log("Processing", req.method, req.url);
-      }
-
       // To Set Response Status code
       res.status = (code) => {
         res.statusCode = code;
@@ -62,15 +50,39 @@ export default class MiniExpress {
           }
         });
       };
-      // Adding Middlewares logic
 
-      // Validating and Invoking registered Routes
-      const currentRoute = req.method.toLowerCase() + "_" + req.url;
-      if (!this._routeMap.has(currentRoute)) {
-        res.status(404).json({ error: "Invalid Route" });
-      } else {
-        this._routeMap.get(currentRoute)(req, res);
-      }
+      // Adding Middlewares Execution login
+      let count = 0;
+      const next = () => {
+        if (count < this._middlewares.length) {
+          this._middlewares[count++](req, res, next);
+        }
+        // Once after all middleware done then only execute routes
+        else {
+          // Logging for Debugging.
+          if (process.env.SERVER_NAME) {
+            console.log(
+              "Processing",
+              req.method,
+              req.url,
+              "on",
+              process.env.SERVER_NAME
+            );
+          } else {
+            console.log("Processing", req.method, req.url);
+          }
+
+          // Validating and Invoking registered Routes
+          const currentRoute = req.method.toLowerCase() + "_" + req.url;
+          if (!this._routeMap.has(currentRoute)) {
+            res.status(404).json({ error: "Invalid Route" });
+          } else {
+            this._routeMap.get(currentRoute)(req, res);
+          }
+        }
+      };
+
+      next(); // Invoking the First middleware
     });
   }
 
@@ -102,6 +114,14 @@ export default class MiniExpress {
         res.sendFile(routesFilesMap.get(fileRoute));
       });
     });
+  }
+
+  /**
+   * Setup middleware function which will be executed before any route is invoked.
+   * @param {(req, res, next)=>{}} middleWareFn
+   */
+  setMiddleWare(middleWareFn) {
+    this._middlewares.push(middleWareFn);
   }
 
   /**

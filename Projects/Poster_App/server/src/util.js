@@ -4,7 +4,7 @@ export async function bodyFromRequest(req) {
   for await (const data of req) {
     body += data;
   }
-  return JSON.parse(body);
+  return JSON.parse(body); // this line will be executd only when async loop is done.
 }
 
 export function getCookieValue(rawCookies, key) {
