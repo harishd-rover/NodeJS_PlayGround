@@ -74,10 +74,20 @@ export default class MiniExpress {
     });
   }
 
+  /**
+   * To Set the App Routes
+   * @param {string} method
+   * @param {path} path
+   * @param {Fn} cb
+   */
   route(method, path, cb) {
     this._routeMap.set(method.toLowerCase() + "_" + path, cb);
   }
 
+  /**
+   * TO Serve Static Content, won't work for nested folders. !TODO
+   * @param {RelativePath} folderPath
+   */
   async serveStatic(folderPath) {
     const directoryFiles = await fsPromises.readdir(folderPath);
     const routesFilesMap = new Map(
@@ -94,6 +104,11 @@ export default class MiniExpress {
     });
   }
 
+  /**
+   * Start the Server to Listen on PORT.
+   * @param {number} port
+   * @param {Fn} cb
+   */
   listen(port = 3000, cb) {
     console.log(this._routeMap.entries());
     this._server.listen(port, () => {
