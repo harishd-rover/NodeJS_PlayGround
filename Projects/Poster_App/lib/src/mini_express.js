@@ -41,13 +41,16 @@ export default class MiniExpress {
           await fsPromises.open(relativePath)
         ).createReadStream();
 
-        pipeline(fileReadStream, res, (err) => {
-          if (err) {
-            console.log(err.message);
-          }
-          {
-            console.log("File Successfully Sent");
-          }
+        return new Promise((resolve, reject) => {
+          pipeline(fileReadStream, res, (err) => {
+            if (err) {
+              console.log(err.message);
+              reject(err.message);
+            } else {
+              console.log("File Successfully Sent");
+              resolve();
+            }
+          });
         });
       };
 
@@ -109,8 +112,8 @@ export default class MiniExpress {
     );
 
     routesFilesMap.keys().forEach((fileRoute) => {
-      this._routeMap.set(fileRoute, (req, res) => {
-        res.sendFile(routesFilesMap.get(fileRoute));
+      this._routeMap.set(fileRoute, async (req, res) => {
+        await res.sendFile(routesFilesMap.get(fileRoute));
       });
     });
   }
