@@ -10,21 +10,14 @@ app.route("get", "/", (req, res) => {
   res.sendFile("../../public/index.html");
 });
 
-// // testing middleware
-// app.setMiddleware((req, res, next) => {
-//   console.log("middlewaare 1 executed");
-//   next();
-// });
-
-// // testing middleware
-// app.setMiddleware((req, res, next) => {
-//   setTimeout(() => {
-//     console.log("middlewaare 2 executed");
-//     next();
-//   }, 2000);
-// });
-
 app.setMiddleware(jsonBodyParser); // json body parser middleware
+
+// app.setMiddleware((req, res, next)=>{
+//   if(req.url==='/'){
+//     res.sendFile("../../public/index.html");
+//   }
+//   next()
+// })
 
 // '/api/login' route
 app.route("post", "/api/login", (req, res) => {
