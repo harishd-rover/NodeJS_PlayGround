@@ -4,7 +4,7 @@ import fsPromises from "node:fs/promises";
 import { pipeline } from "node:stream";
 import { MIME_TYPES } from "./mime_types.js";
 
-export default class MiniExpress {
+export default class MicroExpress {
   httpServer = null;
   routesMap = new Map();
 

@@ -1,8 +1,8 @@
-import MiniExpress from "../../lib/src/micro_express.js";
+import MicroExpress from "../../lib/src/micro_express.js";
 import { posts, users } from "./model.data.js";
 import { bodyFromRequest, getCookieValue } from "./util.js";
 
-const app = new MiniExpress();
+const app = new MicroExpress();
 const AUTH_COOKIE = "posterAuth";
 
 app.route("get", "/", (req, res) => {
