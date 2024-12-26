@@ -51,7 +51,7 @@ export default class MiniExpress {
         });
       };
 
-      // Adding Middlewares Execution login
+      // Adding Middlewares Execution logic
       let count = 0;
       const next = () => {
         if (count < this._middlewares.length) {
@@ -59,24 +59,23 @@ export default class MiniExpress {
         }
         // Once after all middleware done then only execute routes
         else {
-          // Logging for Debugging.
-          if (process.env.SERVER_NAME) {
-            console.log(
-              "Processing",
-              req.method,
-              req.url,
-              "on",
-              process.env.SERVER_NAME
-            );
-          } else {
-            console.log("Processing", req.method, req.url);
-          }
-
           // Validating and Invoking registered Routes
           const currentRoute = req.method.toLowerCase() + "_" + req.url;
           if (!this._routeMap.has(currentRoute)) {
             res.status(404).json({ error: "Invalid Route" });
           } else {
+            // Logging for Debugging.
+            if (process.env.SERVER_NAME) {
+              console.log(
+                "Processing",
+                req.method,
+                req.url,
+                "on",
+                process.env.SERVER_NAME
+              );
+            } else {
+              console.log("Processing", req.method, req.url);
+            }
             this._routeMap.get(currentRoute)(req, res);
           }
         }
@@ -120,7 +119,7 @@ export default class MiniExpress {
    * Setup middleware function which will be executed before any route is invoked.
    * @param {(req, res, next)=>{}} middleWareFn
    */
-  setMiddleWare(middleWareFn) {
+  setMiddleware(middleWareFn) {
     this._middlewares.push(middleWareFn);
   }
 

@@ -1,3 +1,8 @@
+/**
+ * get parsed body from request
+ * @param {Responce} req
+ * @returns
+ */
 export async function bodyFromRequest(req) {
   req.setEncoding("utf-8");
   let body = "";
