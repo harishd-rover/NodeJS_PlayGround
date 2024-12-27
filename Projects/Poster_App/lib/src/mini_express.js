@@ -31,6 +31,18 @@ export default class MiniExpress {
         res.end(JSON.stringify(jsonObj));
       };
 
+      // To set Cookie to Responce
+      res.setCookie = (key, value) => {
+        res.setHeader("Set-Cookie", `${key}=${value};httpOnly;`);
+        return res;
+      };
+
+      // To set Cookie to Responce
+      res.removeCookie = (key) => {
+        res.setHeader("Set-Cookie", `${key}=;Max-Age=0;`);
+        return res;
+      };
+
       // To server the File
       res.sendFile = async (relativePath) => {
         const extName = path.extname(relativePath);
@@ -56,12 +68,18 @@ export default class MiniExpress {
 
       // Adding Middlewares Execution logic
       let count = 0;
-      const next = () => {
+      /**
+       * if responce is handled in middleware, end the navigation to next action
+       * @param {boolean} navigate
+       * @returns
+       */
+      const next = (navigate = true) => {
         if (count < this._middlewares.length) {
-          this._middlewares[count++](req, res, next);
+          return this._middlewares[count++](req, res, next);
         }
         // Once after all middleware done then only execute routes
-        else {
+        // ! important to check whether the middlewares handled the response.
+        else if (navigate && !res.finished) {
           // Validating and Invoking registered Routes
           const currentRoute = req.method.toLowerCase() + "_" + req.url;
           if (!this._routeMap.has(currentRoute)) {
@@ -132,6 +150,10 @@ export default class MiniExpress {
    * @param {Fn} cb
    */
   listen(port = 3000, cb) {
+    console.log("Middleswares:-");
+    console.log(this._middlewares);
+    console.log("________________________________");
+    console.log("Routes:-");
     console.log(this._routeMap.entries());
     this._server.listen(port, () => {
       cb();

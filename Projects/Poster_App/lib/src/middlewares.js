@@ -6,7 +6,7 @@
  * @param {next} next
  */
 export async function jsonBodyParser(req, res, next) {
-  let body = '';
+  let body = "";
   if (req.headers["content-type"] === "application/json") {
     req.setEncoding("utf-8");
     for await (const data of req) {
@@ -14,5 +14,16 @@ export async function jsonBodyParser(req, res, next) {
     }
   }
   req.body = JSON.parse(body || null); // this line will be executd only when async loop is done.
+  next();
+}
+
+export function cookiesParser(req, res, next) {
+  if (req.headers?.cookie) {
+    req.cookies = new Map(
+      req.headers.cookie.split(";").map((cookie) => [...cookie.split("=")])
+    );
+  } else {
+    req.cookie = new Map();
+  }
   next();
 }
