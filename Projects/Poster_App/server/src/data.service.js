@@ -1,5 +1,5 @@
 import { posts, users } from "./model.data.js";
-import { Post } from "./models.js";
+import { Post, User } from "./models.js";
 
 export function getAllPosts() {
   return posts.map((post) => ({
@@ -42,5 +42,10 @@ export function updateUser(userId, name, username, password) {
   };
   const currentUserIndex = getUserIndex(userId);
   users.splice(currentUserIndex, 1, modifiedUser);
-  return modifiedUser;
+  return new User(
+    modifiedUser.id,
+    modifiedUser.name,
+    modifiedUser.username,
+    modifiedUser.password
+  );
 }

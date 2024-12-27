@@ -85,7 +85,7 @@ app.route("post", "/api/login", (req, res) => {
 
 app.route("get", "/api/user", (req, res) => {
   const currentUser = dataService.getUser(req.userId);
-  res.status(200).json(currentUser);
+  res.status(200).json({ ...currentUser, password: "*******" });
 });
 
 app.route("post", "/api/posts", async (req, res) => {
@@ -110,7 +110,7 @@ app.route("put", "/api/user", async (req, res) => {
   return res
     .setCookie(AUTH_COOKIE, newToken)
     .status(200)
-    .json({ updatedUser: modifiedUser });
+    .json({ updatedUser: { ...modifiedUser, password: "*****" } });
 });
 
 app.route("delete", "/api/logout", (req, res) => {
