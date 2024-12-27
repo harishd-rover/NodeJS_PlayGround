@@ -43,6 +43,17 @@ export default class MiniExpress {
         return res;
       };
 
+      res.download = (fileName, contentLength) => {
+        if (contentLength) {  // To show download estimations to user.
+          res.setHeader("Content-Length", contentLength);
+        }
+        res.setHeader(
+          "Content-Disposition",
+          `attachment; filename=${fileName}`
+        );
+        return res;
+      };
+
       // To server the File
       res.sendFile = async (relativePath) => {
         const extName = path.extname(relativePath);

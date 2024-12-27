@@ -1,6 +1,9 @@
 import MiniExpress from "../../lib/src/mini_express.js";
 import { jsonBodyParser, cookiesParser } from "../../lib/src/middlewares.js";
 import { posts, users } from "./model.data.js";
+import { hugeJSON } from "./hugejson.js";
+import StreamifyJSON from "../../lib/src/streamify_json.js";
+import { pipeline } from "node:stream";
 const AUTH_COOKIE = "posterAuth";
 
 const app = new MiniExpress();
@@ -145,6 +148,28 @@ app.route("delete", "/api/logout", (req, res) => {
     return;
   }
   res.removeCookie(AUTH_COOKIE).status(200).json({ message: "Logged Out" });
+});
+
+app.route("get", "/hugeJSONdownload", (req, res) => {
+  // res.json(hugeJSON)
+
+  // simulating 20kb delayed chunks and trigerring downlaod on client.
+  const jsonReadStream = new StreamifyJSON(
+    hugeJSON,
+    { highWaterMark: 20_480 },
+    true,
+    false
+  );
+
+  res.download(`${Math.random() * 1000}.json`, jsonReadStream.jsonBufferLength);
+  // Here we can understand the power of pipeline() when we cancel the download on client side.
+  pipeline(jsonReadStream, res, (error) => {
+    if (error) {
+      console.log("Error : Download Stopped Unexpectedly!!!");
+    } else {
+      console.log("Sucess: Download Done!!!");
+    }
+  });
 });
 
 app.listen(3000, () => {
