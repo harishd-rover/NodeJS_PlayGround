@@ -39,7 +39,7 @@ app.setMiddleware(async (req, res, next) => {
   ) {
     await res.sendFile("../../public/index.html"); // Response is hanlded Here.
     // return next(false); // response handled on this middlewaare so don't navigate to next action. or
-    return; // better to not call next() here. just return.
+    return; // just return here, without calling next()
   }
   next();
 });
