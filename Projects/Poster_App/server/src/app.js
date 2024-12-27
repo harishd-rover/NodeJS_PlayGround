@@ -1,9 +1,9 @@
 import MiniExpress from "../../lib/src/mini_express.js";
 import { jsonBodyParser, cookiesParser } from "../../lib/src/middlewares.js";
-import { posts, users } from "./model.data.js";
 import { hugeJSON } from "./hugejson.js";
 import StreamifyJSON from "../../lib/src/streamify_json.js";
 import { pipeline } from "node:stream";
+import * as dataService from "./data.service.js";
 const AUTH_COOKIE = "posterAuth";
 
 const app = new MiniExpress();
@@ -16,16 +16,28 @@ app.setMiddleware(cookiesParser); // parse cookies from the request
 
 // auth middleware
 app.setMiddleware((req, res, next) => {
-  if (req.url.startsWith("/api")) {
+  if (
+    req.url.startsWith("/api") &&
+    !(req.url === "/api/login") &&
+    !(req.url === "/api/posts" && req.method === "GET")
+  ) {
     const authToken = req.cookies?.get(AUTH_COOKIE);
     if (authToken) {
-      const [username, password] = authToken.split("_");
-      const currentUser = users.find(
-        (user) => user.username === username && user.password === password
-      );
-      if (currentUser) {
-        req.userId = currentUser.id;
+      const [username, password] = extractToken(authToken);
+      const validUser = dataService.validateUser(username, password);
+
+      if (validUser) {
+        req.userId = validUser.id;
+        return next();
+      } else {
+        return res
+          .status(401)
+          .json({ error: "Invalid User, please login again" });
       }
+    } else {
+      return res
+        .status(401)
+        .json({ error: "Invalid User, please login again" });
     }
   }
   next();
@@ -48,105 +60,60 @@ app.setMiddleware(async (req, res, next) => {
 });
 
 app.route("get", "/api/posts", (req, res) => {
-  res.status(200).json(
-    posts.map((post) => ({
-      ...post,
-      author: users.find((user) => user.id == post.userId).name,
-    }))
-  );
+  const posts = dataService.getAllPosts();
+  res.status(200).json(posts);
 });
 
 // '/api/login' route
 app.route("post", "/api/login", (req, res) => {
   const { username, password } = req.body;
-  const currentUser = users.find((user) => user.username === username);
+  const currentUser = dataService.getUserFromUserName(username);
   if (!currentUser) {
     res.status(401).json({ error: "Invalid Username" });
     return;
   }
-
   if (currentUser.password !== password) {
     res.status(401).json({ error: "Invalid Password" });
     return;
   }
-
+  const authToken = createToken(currentUser.username, currentUser.password);
   res
-    .setCookie(AUTH_COOKIE, `${currentUser.username}_${currentUser.password}`)
+    .setCookie(AUTH_COOKIE, authToken)
     .status(200)
     .json({ message: "Logged in!!!" });
 });
 
 app.route("get", "/api/user", (req, res) => {
-  const currentUser = users.find((user) => user.id === req.userId);
-  if (currentUser) {
-    res.status(200).json(currentUser);
-    return;
-  }
-  res.status(401).json({ error: "Invalid User, please login again" });
+  const currentUser = dataService.getUser(req.userId);
+  res.status(200).json(currentUser);
 });
 
 app.route("post", "/api/posts", async (req, res) => {
-  const currentUser = users.find((user) => user.id === req.userId);
-  if (!currentUser) {
-    res.status(401).json({ error: "Invalid User, please login again" });
-    return;
-  }
-  const { title: postTitle, body: postBody } = req.body;
-
-  posts.unshift({
-    id: Math.random(),
-    title: postTitle,
-    body: postBody,
-    userId: currentUser.id,
-  });
-
-  res.status(200).json({
-    id: Math.random(),
-    title: postTitle,
-    body: postBody,
-    userId: currentUser.id,
-  });
+  const newPost = dataService.createPost(
+    req.userId,
+    req.body.title,
+    req.body.body
+  );
+  res.status(200).json(newPost);
 });
 
 app.route("put", "/api/user", async (req, res) => {
-  const currentUserIndex = users.findIndex((user) => user.id === req.userId);
+  const modifiedUser = dataService.updateUser(
+    req.userId,
+    req.body.name,
+    req.body.username,
+    req.body.password
+  );
+  // update cookie
+  const newToken = createToken(modifiedUser.username, modifiedUser.password);
 
-  if (currentUserIndex >= 0) {
-    const currentUser = users[currentUserIndex];
-
-    const {
-      name: modName,
-      username: modUsername,
-      password: modPassword,
-    } = req.body;
-
-    const modifiedUser = {
-      ...currentUser,
-      name: modName || currentUser.name,
-      username: modUsername || currentUser.username,
-      password: modPassword || currentUser.password,
-    };
-
-    users.splice(currentUserIndex, 1, modifiedUser);
-    // change cookie
-    return res
-      .setCookie(
-        AUTH_COOKIE,
-        `${modifiedUser.username}_${modifiedUser.password}`
-      )
-      .status(200)
-      .json({ updatedUser: modifiedUser });
-  }
-
-  res.status(401).json({ error: "Invalid User, please login again" });
+  return res
+    .setCookie(AUTH_COOKIE, newToken)
+    .status(200)
+    .json({ updatedUser: modifiedUser });
 });
 
 app.route("delete", "/api/logout", (req, res) => {
-  const currentUser = users.find((user) => user.id === req.userId);
-  if (!currentUser) {
-    res.status(401).json({ error: "Invalid User, please login again" });
-    return;
-  }
   res.removeCookie(AUTH_COOKIE).status(200).json({ message: "Logged Out" });
 });
 
@@ -175,3 +142,11 @@ app.route("get", "/hugeJSONdownload", (req, res) => {
 app.listen(3000, () => {
   console.log("Server listening on port 3000");
 });
+
+function createToken(...args) {
+  return args.join("_");
+}
+
+function extractToken(token) {
+  return token.split("_");
+}
