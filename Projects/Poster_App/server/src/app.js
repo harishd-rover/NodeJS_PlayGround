@@ -11,19 +11,6 @@ app.setMiddleware(jsonBodyParser); // json body parser middleware
 
 app.setMiddleware(cookiesParser); // parse cookies from the request
 
-app.setMiddleware(async (req, res, next) => {
-  if (
-    req.url === "/" ||
-    req.url === "/login" ||
-    req.url === "/profile" ||
-    req.url === "/new-post"
-  ) {
-    await res.sendFile("../../public/index.html");
-    return next(false); // response handled on this middlewaare don't navigate to next action.
-  }
-  next();
-});
-
 // auth middleware
 app.setMiddleware((req, res, next) => {
   if (req.url.startsWith("/api")) {
@@ -37,6 +24,22 @@ app.setMiddleware((req, res, next) => {
         req.userId = currentUser.id;
       }
     }
+  }
+  next();
+});
+
+//? Actually This should not be a middleware.
+//? it violates the middleware functionality.
+app.setMiddleware(async (req, res, next) => {
+  if (
+    req.url === "/" ||
+    req.url === "/login" ||
+    req.url === "/profile" ||
+    req.url === "/new-post"
+  ) {
+    await res.sendFile("../../public/index.html"); // Response is hanlded Here.
+    // return next(false); // response handled on this middlewaare so don't navigate to next action. or
+    return; // better to not call next() here. just return.
   }
   next();
 });
