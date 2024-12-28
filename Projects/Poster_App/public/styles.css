@@ -608,5 +608,11 @@ body {
   left: 110px;
   top: 16px;
   font-size: 14px;
+}
 
+.downloadLink{
+  position: absolute;
+  left: 180px;
+  top: 16px;
+  font-size: 14px;
 }

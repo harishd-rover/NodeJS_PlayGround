@@ -1,6 +1,7 @@
+// https://medium.com/@vaibhavmoradiya/how-to-implement-own-streams-in-node-js-edd9ab54a59b
 import { Stream } from "node:stream";
 
-const delay = (time = 1000) =>
+const delay = (time = 300) =>
   new Promise((resolve) => setTimeout(resolve, time));
 
 export default class StreamifyJSON extends Stream.Readable {
@@ -10,7 +11,7 @@ export default class StreamifyJSON extends Stream.Readable {
   _jsonBufferBytesLength = null;
   _noOfReads = 0;
   _simulateDelay = null;
-  constructor(jsonObject, options, logging = false, simulateDelay = false) {
+  constructor(jsonObject, options, logging = false, simulateDelay = null) {
     super(options);
     this._jsonObj = jsonObject;
     this._logging = logging;
@@ -43,7 +44,7 @@ export default class StreamifyJSON extends Stream.Readable {
       }
 
       if (this._simulateDelay) {
-        await delay();
+        await delay(this._simulateDelay);
       }
 
       this.push(
@@ -56,7 +57,7 @@ export default class StreamifyJSON extends Stream.Readable {
       this._bytesRead = this._bytesRead + this.readableHighWaterMark;
     } else {
       if (this._logging) {
-        console.log("Ended Stream with", this._noOfReads, "chunks.");
+        console.log("Stream Ended with", this._noOfReads, "chunks.");
       }
       this.push(null); // ending the stream.
     }

@@ -129,7 +129,7 @@ app.route("get", "/hugeJSONdownload", (req, res) => {
     hugeJSON,
     { highWaterMark: 20_480 },
     true,
-    false
+    50
   );
 
   res.download(`${Math.random() * 1000}.json`, jsonReadStream.jsonBufferLength);
@@ -138,7 +138,7 @@ app.route("get", "/hugeJSONdownload", (req, res) => {
     if (error) {
       console.log("Error : Download Stopped Unexpectedly!!!");
     } else {
-      console.log("Sucess: Download Done!!!");
+      console.log("Success: Download Done!!!");
     }
   });
 });
