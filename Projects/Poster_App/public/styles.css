@@ -602,3 +602,11 @@ body {
 .alert-snackbar--close {
   display: none;
 }
+
+.youtubeLink {
+  position: absolute;
+  left: 110px;
+  top: 16px;
+  font-size: 14px;
+
+}

@@ -117,6 +117,10 @@ app.route("delete", "/api/logout", (req, res) => {
   res.removeCookie(AUTH_COOKIE).status(200).json({ message: "Logged Out" });
 });
 
+app.route("get", "/youtube", (req, res) => {
+  res.redirect("https://www.youtube.com/");
+});
+
 app.route("get", "/hugeJSONdownload", (req, res) => {
   // res.json(hugeJSON)
 

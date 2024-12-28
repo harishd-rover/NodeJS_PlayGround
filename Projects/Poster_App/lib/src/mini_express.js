@@ -44,7 +44,8 @@ export default class MiniExpress {
       };
 
       res.download = (fileName, contentLength) => {
-        if (contentLength) {  // To show download estimations to user.
+        if (contentLength) {
+          // To show download estimations to user.
           res.setHeader("Content-Length", contentLength);
         }
         res.setHeader(
@@ -52,6 +53,13 @@ export default class MiniExpress {
           `attachment; filename=${fileName}`
         );
         return res;
+      };
+
+      //To Redirect to another URL
+      res.redirect = (url, statusCode) => {
+        res.status(statusCode ?? 303);
+        res.setHeader("Location", url);
+        res.end();
       };
 
       // To server the File
