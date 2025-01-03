@@ -1,3 +1,4 @@
+import path from "node:path";
 console.log("\n", "PWD: Parent Working Directory of this File");
 console.log(import.meta.dirname, "\n");
 // console.log(__dirname, "\n");  // incase of CommonJS module system,
@@ -17,7 +18,16 @@ console.log(process.cwd(), "\n");
 // PS C:\Users\haris\Desktop> node .\NodeJS_PlayGround\Tasks_Pending\20.cwd_vs_pwd_require_import_fsOpen.js
 
 //  PWD: Parent Working Directory of this File
-// C:\Users\haris\Desktop\NodeJS_PlayGround\Tasks_Pending 
+// C:\Users\haris\Desktop\NodeJS_PlayGround\Tasks_Pending
 
 // CWD: Current Working Directory of the process
-// C:\Users\haris\Desktop 
+// C:\Users\haris\Desktop
+
+console.log("Env Variable: PATH");
+console.log(process.env.PATH, "\n");
+
+console.log("PATHS:- Delimeter separated");
+// In winAPI, paths delimeter is (;)
+// In POSIX, paths delimeter is (:)
+// node:path.delimeter provides  Plotformwise delimeters
+console.log(process.env.PATH.split(path.delimiter));
