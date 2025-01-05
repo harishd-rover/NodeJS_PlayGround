@@ -15,14 +15,14 @@ const shell_childProcess = exec(
 //## node:spawn
 //## spawn directly spawns the process, No Shell is involved here...
 //## Here we can access the data streams of the child process, no bufferring.
-const childProcess = spawn("node", ["../assets/node_child_process.js"]);
+const node_childProcess = spawn("node", ["../assets/node_child_process.js"]);
 
-childProcess.stdin.write("Hello From Parent Process");
+node_childProcess.stdin.write("Hello From Parent Process");
 
 setInterval(() => {
-  childProcess.stdin.write("Ping!!! From Parent Process");
+  node_childProcess.stdin.write("Ping!!! From Parent Process");
 }, 2000);
 
-childProcess.stdout.on("data", (data) => {
+node_childProcess.stdout.on("data", (data) => {
   console.log(`Message from ChildProcess : ${data.toString()}`);
 });
