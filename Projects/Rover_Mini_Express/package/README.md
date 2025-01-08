@@ -35,7 +35,7 @@ RoverMiniExpress is a lightweight Node.js framework inspired by Express.js. It p
 
 ```javascript
 import MiniExpress from "rover-mini-express";
-import { jsonBodyParser, cookiesParser } from "rover-mini-express/middleware";
+import { jsonBodyParser, cookiesParser } from "rover-mini-express/middlewares";
 import StreamifyJSON from "rover-mini-express/streamify_json";
 import { MIME_TYPES } from "rover-mini-express/mime_types";
 ```
@@ -81,7 +81,7 @@ app.listen(3000, () => {
 
 ```javascript
 import MiniExpress from "rover-mini-express";
-import { jsonBodyParser, cookiesParser } from "rover-mini-express/middleware";
+import { jsonBodyParser, cookiesParser } from "rover-mini-express/middlewares";
 import StreamifyJSON from "rover-mini-express/streamify_json";
 import { MIME_TYPES } from "rover-mini-express/mime_types";
 

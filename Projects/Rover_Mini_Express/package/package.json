@@ -6,7 +6,7 @@
   "scripts": {},
   "exports": {
     ".": "./mini_express.js",
-    "./middleware": "./util/middlewares.js",
+    "./middlewares": "./util/middlewares.js",
     "./streamify_json": "./util/streamify_json.js",
     "./mime_types": "./util/mime_types.js"
   },
