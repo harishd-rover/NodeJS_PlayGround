@@ -4,7 +4,10 @@
 ## Overview
 
 RoverMiniExpress is a lightweight Node.js framework inspired by Express.js. It provides essential features for building web applications and APIs, including routing, middleware support, file serving, and response helpers. 
-## Important Note: This package is just for Educational Purpose!!!.
+
+
+> [!WARNING]  
+> Important Note : This package is just for Educational Purpose !!!
 
 ## Features
 
@@ -35,9 +38,8 @@ RoverMiniExpress is a lightweight Node.js framework inspired by Express.js. It p
 
 ```javascript
 import MiniExpress from "rover-mini-express";
-import { jsonBodyParser, cookiesParser } from "rover-mini-express/middlewares";
-import StreamifyJSON from "rover-mini-express/streamify_json";
-import { MIME_TYPES } from "rover-mini-express/mime_types";
+
+const app = new MiniExpress();
 ```
 
 ### 2. Defining Routes
@@ -64,7 +66,7 @@ app.setMiddleware((req, res, next) => {
 ### 4. Serving Static Files
 
 ```javascript
-await app.serveStatic('./public');
+app.serveStatic('./public');
 ```
 
 ### 5. Starting the Server

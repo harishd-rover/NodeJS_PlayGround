@@ -1,6 +1,6 @@
 {
   "name": "rover-mini-express",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "mini/light version on express.js - express clone.",
   "type": "module",
   "scripts": {},
