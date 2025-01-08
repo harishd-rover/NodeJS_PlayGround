@@ -1,0 +1,19 @@
+{
+  "name": "rover-mini-express",
+  "version": "1.0.0",
+  "description": "mini/light version on express.js - express clone.",
+  "type": "module",
+  "scripts": {},
+  "exports": {
+    ".": "./mini_express.js",
+    "./middleware": "./util/middlewares.js",
+    "./streamify_json": "./util/streamify_json.js",
+    "./mime_types": "./util/mime_types.js"
+  },
+  "keywords": [
+    "rover-mini-express",
+    "express-clone"
+  ],
+  "author": "Harish D",
+  "license": "ISC"
+}
