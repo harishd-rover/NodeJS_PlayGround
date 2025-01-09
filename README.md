@@ -16,7 +16,7 @@ This repository serves as a sandbox environment where you can experiment with an
 - **Middlewares**
 - **RoverMiniExpress** own express-like library
 - **WebSockets** and creating servers
-- **Inter Process Communication**
+- **Inter Process Communication(IPC)**
 - **Child Processes**
 - **Clustering**
 - And much much more!!!
