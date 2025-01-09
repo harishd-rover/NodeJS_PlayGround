@@ -12,6 +12,7 @@ This repository serves as a sandbox environment where you can experiment with an
 - **File System (fs)** operations
 - **Networking (net)** TCP & Networking
 - **HTTP Module** and creating servers
+- **Proxies**
 - **Middlewares**
 - **RoverMiniExpress** own express-like library
 - **WebSockets** and creating servers
