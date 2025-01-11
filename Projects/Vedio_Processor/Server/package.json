@@ -1,0 +1,17 @@
+{
+  "name": "video-processor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --watch src/index.js",
+    "cluster": "node src/cluster.js"
+  },
+  "author": "Harish D",
+  "license": "ISC",
+  "dependencies": {
+    "rover-mini-express": "^1.0.4"
+  }
+}

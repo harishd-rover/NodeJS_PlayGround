@@ -12,6 +12,14 @@
       "program": "${workspaceFolder}\\Projects\\Poster_App\\server\\src\\app.js",
       "cwd": "${workspaceFolder}\\Projects\\Poster_App\\server\\src",
       "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "VedioProcessing",
+      "program": "${workspaceFolder}\\Projects\\Vedio_Processor\\server\\src\\index.js",
+      "cwd": "${workspaceFolder}\\Projects\\Vedio_Processor\\server\\src",
+      "console": "integratedTerminal"
     }
   ]
 }
