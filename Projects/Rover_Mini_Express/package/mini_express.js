@@ -99,7 +99,7 @@ export default class MiniExpress {
         // ! important to check whether the middlewares handled the response.
         else if (navigate && !res.finished) {
           // Validating and Invoking registered Routes
-          const currentRoute = req.method.toLowerCase() + "_" + req.url;
+          const currentRoute = req.method.toLowerCase() + "_" + req.url.split('?')[0];
           if (!this._routeMap.has(currentRoute)) {
             res.status(404).json({ error: "Invalid Route" });
           } else {

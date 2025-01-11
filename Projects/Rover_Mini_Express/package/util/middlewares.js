@@ -17,6 +17,14 @@ export async function jsonBodyParser(req, res, next) {
   next();
 }
 
+/**
+ * cookiesParser
+ * middleware to parse cookies from the request,
+ * Cookies can be accessed from req.cookie Map
+ * @param {req} req
+ * @param {res} res
+ * @param {next} next
+ */
 export function cookiesParser(req, res, next) {
   if (req.headers?.cookie) {
     req.cookies = new Map(
@@ -25,5 +33,19 @@ export function cookiesParser(req, res, next) {
   } else {
     req.cookie = new Map();
   }
+  next();
+}
+
+/**
+ * urlParamsParser
+ * middleware to parse URL Query Params from the request,
+ * Query Params can be accessed from req.params Map.
+ * @param {req} req
+ * @param {res} res
+ * @param {next} next
+ */
+export function urlParamsParser(req, res, next) {
+  const queryParams = req.url.split("?")[1];
+  req.params = new URLSearchParams(queryParams);
   next();
 }
