@@ -1,11 +1,16 @@
-import MiniExpress from "rover-mini-express";
-import {
+import MiniExpress, {
   jsonBodyParser,
   cookiesParser,
   urlParamsParser,
-} from "rover-mini-express/middlewares";
-import StreamifyJSON from "rover-mini-express/streamify_json";
-import { MIME_TYPES } from "rover-mini-express/mime_types";
+  StreamifyJSON,
+  mime_types
+} from "rover-mini-express";
+// import {
+//   jsonBodyParser,
+//   cookiesParser,
+//   urlParamsParser,
+// } from "rover-mini-express/middlewares";
+// import StreamifyJSON from "rover-mini-express/streamify_json";
 
 const app = new MiniExpress();
 
@@ -36,6 +41,6 @@ app.route("get", "/api", (req, res) => {
 
 app.listen(2000, () => {
   console.log("--------------MimeTypes---------------------");
-  console.log(MIME_TYPES);
+  console.log(mime_types);
   console.log("Server Listening on 2000");
 });
