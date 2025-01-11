@@ -12,6 +12,6 @@
   "author": "Harish D",
   "license": "ISC",
   "dependencies": {
-    "rover-mini-express": "^1.0.4"
+    "rover-mini-express": "^1.0.5"
   }
 }

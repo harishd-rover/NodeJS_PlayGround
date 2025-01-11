@@ -15,6 +15,9 @@ app.serveStatic(path.resolve(import.meta.dirname, "../public/"));
 // For parsing JSON body
 app.setMiddleware(roverMiddlewares.jsonBodyParser);
 
+// For parsing URL QueryParams
+app.setMiddleware(roverMiddlewares.urlParamsParser);
+
 // parse cookies from the request
 app.setMiddleware(roverMiddlewares.cookiesParser);
 
