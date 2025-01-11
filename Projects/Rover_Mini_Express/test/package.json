@@ -9,6 +9,6 @@
   "license": "ISC",
   "description": "To Test RoverMiniExpress npm Package",
   "dependencies": {
-    "rover-mini-express": "^1.0.3"
+    "rover-mini-express": "^1.0.5"
   }
 }

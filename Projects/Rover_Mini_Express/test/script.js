@@ -1,5 +1,9 @@
 import MiniExpress from "rover-mini-express";
-import { jsonBodyParser, cookiesParser } from "rover-mini-express/middlewares";
+import {
+  jsonBodyParser,
+  cookiesParser,
+  urlParamsParser,
+} from "rover-mini-express/middlewares";
 import StreamifyJSON from "rover-mini-express/streamify_json";
 import { MIME_TYPES } from "rover-mini-express/mime_types";
 
@@ -7,10 +11,14 @@ const app = new MiniExpress();
 
 app.setMiddleware(jsonBodyParser);
 
+app.setMiddleware(urlParamsParser);
+
 app.setMiddleware(cookiesParser);
 
 app.route("get", "/api", (req, res) => {
-  console.log("Cookies", req.cookies);
+  console.log("Cookies: ", req.cookies);
+
+  console.log("QueryParams: ", [...req.params.entries()]);
 
   const jsonStream = new StreamifyJSON(
     {
