@@ -1,10 +1,8 @@
-
 # RoverMiniExpress - A Lightweight Express-like Framework for Node.js
 
 ## Overview
 
-RoverMiniExpress is a lightweight Node.js framework inspired by Express.js. It provides essential features for building web applications and APIs, including routing, middleware support, file serving, and response helpers. 
-
+RoverMiniExpress is a lightweight Node.js framework inspired by Express.js. It provides essential features for building web applications and APIs, including routing, middleware support, file serving, and response helpers.
 
 > [!WARNING]  
 > Important Note : This package is just for Educational Purpose !!!
@@ -14,6 +12,11 @@ RoverMiniExpress is a lightweight Node.js framework inspired by Express.js. It p
 - **Routing**: Define HTTP routes with ease.
 - **Middleware Support**: Add custom middleware functions for pre-route processing.
 - **Static File Serving**: Serve static files with simple configurations.
+- **Ready Middlewares**:
+  - `jsonBodyParser` - To parse request body - `req.body` : Object
+  - `cookiesParser` - To parse request cookeies - `req.cookies` : Set
+  - `urlParamsParser` - To parse request query params - `req.params` : Map
+
 - **Response Helpers**:
   - `res.status(code)` - Set HTTP status code.
   - `res.message(message)` - Set HTTP status message.
@@ -30,8 +33,8 @@ RoverMiniExpress is a lightweight Node.js framework inspired by Express.js. It p
 
 1. Ensure you have Node.js installed.
 2. Install rover-mini-express package
-  ``` npm install rover-mini-express```
-  
+   ` npm install rover-mini-express`
+
 ## Usage
 
 ### 1. Creating a MiniExpress Application
@@ -45,11 +48,11 @@ const app = new MiniExpress();
 ### 2. Defining Routes
 
 ```javascript
-app.route('GET', '/', (req, res) => {
-  res.json({ message: 'Welcome to MiniExpress!' });
+app.route("GET", "/", (req, res) => {
+  res.json({ message: "Welcome to MiniExpress!" });
 });
 
-app.route('POST', '/data', (req, res) => {
+app.route("POST", "/data", (req, res) => {
   res.json({ success: true });
 });
 ```
@@ -57,6 +60,12 @@ app.route('POST', '/data', (req, res) => {
 ### 3. Adding Middleware
 
 ```javascript
+app.setMiddleware(jsonBodyParser);
+
+app.setMiddleware(urlParamsParser);
+
+app.setMiddleware(cookiesParser);
+
 app.setMiddleware((req, res, next) => {
   console.log(`${req.method} request for ${req.url}`);
   next();
@@ -66,14 +75,14 @@ app.setMiddleware((req, res, next) => {
 ### 4. Serving Static Files
 
 ```javascript
-app.serveStatic('./public');
+app.serveStatic("./public");
 ```
 
 ### 5. Starting the Server
 
 ```javascript
 app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
+  console.log("Server is running on http://localhost:3000");
 });
 ```
 
@@ -82,19 +91,38 @@ app.listen(3000, () => {
 ## Example Application
 
 ```javascript
-import MiniExpress from "rover-mini-express";
-import { jsonBodyParser, cookiesParser } from "rover-mini-express/middlewares";
-import StreamifyJSON from "rover-mini-express/streamify_json";
-import { MIME_TYPES } from "rover-mini-express/mime_types";
+import MiniExpress, {
+  jsonBodyParser,
+  cookiesParser,
+  urlParamsParser,
+  StreamifyJSON,
+  mime_types,
+} from "rover-mini-express";
+
+// or
+
+// import MiniExpress from "rover-mini-express";
+// import {
+//   jsonBodyParser,
+//   cookiesParser,
+//   urlParamsParser,
+// } from "rover-mini-express/middlewares";
+// import StreamifyJSON from "rover-mini-express/streamify_json";
 
 const app = new MiniExpress();
 
 app.setMiddleware(jsonBodyParser);
 
+app.setMiddleware(urlParamsParser);
+
 app.setMiddleware(cookiesParser);
 
-app.route("get", "/api", (req, res) => {
-  console.log("Cookies", req.cookies);
+app.route("get", "/api", (req, res, handleError) => {
+  console.log("Cookies: ", req.cookies);
+
+  if (req.params.get("error")) {
+    return handleError(); // handling routes error
+  }
 
   const jsonStream = new StreamifyJSON(
     {
@@ -112,10 +140,9 @@ app.route("get", "/api", (req, res) => {
 
 app.listen(2000, () => {
   console.log("--------------MimeTypes---------------------");
-  console.log(MIME_TYPES);
+  console.log(mime_types);
   console.log("Server Listening on 2000");
 });
-
 ```
 
 ---
