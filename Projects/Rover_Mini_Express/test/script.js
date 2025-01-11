@@ -22,10 +22,14 @@ app.setMiddleware(urlParamsParser);
 
 app.setMiddleware(cookiesParser);
 
-app.route("get", "/api", (req, res) => {
+app.route("get", "/api", (req, res, handleError) => {
   console.log("Cookies: ", req.cookies);
 
   console.log("QueryParams: ", [...req.params.entries()]);
+
+  if (req.params.get("error")) {
+    return handleError();
+  }
 
   const jsonStream = new StreamifyJSON(
     {

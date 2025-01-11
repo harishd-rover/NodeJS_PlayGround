@@ -122,7 +122,7 @@ export default class MiniExpress {
             } else {
               console.log("Processing", req.method, req.url);
             }
-            this._routeMap.get(currentRoute)(req, res);
+            this._routeMap.get(currentRoute)(req, res, this.handleError(res));
           }
         }
       };
@@ -167,6 +167,27 @@ export default class MiniExpress {
    */
   setMiddleware(middleWareFn) {
     this._middlewares.push(middleWareFn);
+  }
+
+  /**
+   * handle Routes Error
+   * @param {status, error} error
+   * @param {req} req
+   * @param {res} res
+   * @returns (error)=>{handleError}
+   */
+  handleError(res) {
+    return (error) => {
+      const err =
+        error && error.error
+          ? error.error
+          : "Something went wrong... Please try again later...";
+      const status = error && error.status ? error.status : 500;
+      res.setHeader("Connection", "close");
+      res.status(status).json({
+        error: err,
+      });
+    };
   }
 
   /**
