@@ -13,6 +13,7 @@ RoverMiniExpress is a lightweight Node.js framework inspired by Express.js. It p
 - **Middleware Support**: Add custom middleware functions for pre-route processing.
 - **Static File Serving**: Serve static files with simple configurations.
 - **Ready Middlewares**:
+
   - `jsonBodyParser` - To parse request body - `req.body` : Object
   - `cookiesParser` - To parse request cookeies - `req.cookies` : Set
   - `urlParamsParser` - To parse request query params - `req.params` : Map
@@ -78,7 +79,27 @@ app.setMiddleware((req, res, next) => {
 app.serveStatic("./public");
 ```
 
-### 5. Starting the Server
+### 5. Easy Error Handling, RoverMiniExpress provides default error handling for routes
+
+```javascript
+// set custom app error handler
+app.setErrorHandler((error, req, res) => {
+  // Do something with errors at one place
+  console.log("Error: ", error);
+  res
+    .status(error?.status ?? 500)
+    .json({ testAppError: error?.error ?? "TestApp Error" });
+});
+
+// use app error handler in each routes
+app.route("get", "/api", (req, res, handleError) => {
+  if (req.params.get("error")) {
+    return handleError({ status: 501, error: "My Route Error" });
+  }
+});
+```
+
+### 6. Starting the Server
 
 ```javascript
 app.listen(3000, () => {
@@ -99,8 +120,6 @@ import MiniExpress, {
   mime_types,
 } from "rover-mini-express";
 
-// or
-
 // import MiniExpress from "rover-mini-express";
 // import {
 //   jsonBodyParser,
@@ -108,6 +127,7 @@ import MiniExpress, {
 //   urlParamsParser,
 // } from "rover-mini-express/middlewares";
 // import StreamifyJSON from "rover-mini-express/streamify_json";
+// import { MIME_TYPES } from "rover-mini-express/mime_types";
 
 const app = new MiniExpress();
 
@@ -117,11 +137,19 @@ app.setMiddleware(urlParamsParser);
 
 app.setMiddleware(cookiesParser);
 
+app.setErrorHandler((error, req, res) => {
+  // Do something with errors at one place
+  console.log("Error: ", error);
+  res
+    .status(error?.status ?? 500)
+    .json({ testAppError: error?.error ?? "Test App Error" });
+});
+
 app.route("get", "/api", (req, res, handleError) => {
   console.log("Cookies: ", req.cookies);
 
   if (req.params.get("error")) {
-    return handleError(); // handling routes error
+    return handleError({ status: 501, error: "My Route Error" });
   }
 
   const jsonStream = new StreamifyJSON(

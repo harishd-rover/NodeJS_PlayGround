@@ -9,10 +9,13 @@ import {
   urlParamsParser,
 } from "./util/middlewares.js";
 import StreamifyJSON from "./util/streamify_json.js";
+
+const ERROR_MSG = "Something went wrong! Please try again later.";
 export default class MiniExpress {
   _server = null;
   _routeMap = new Map();
   _middlewares = [];
+  handleError = null;
 
   constructor() {
     this._server = http.createServer();
@@ -122,7 +125,11 @@ export default class MiniExpress {
             } else {
               console.log("Processing", req.method, req.url);
             }
-            this._routeMap.get(currentRoute)(req, res, this.handleError(res));
+            this._routeMap.get(currentRoute)(
+              req,
+              res,
+              this._handleError(req, res)
+            );
           }
         }
       };
@@ -170,24 +177,33 @@ export default class MiniExpress {
   }
 
   /**
-   * handle Routes Error
-   * @param {status, error} error
+   * Use setHandleError to set this app error handling.
    * @param {req} req
    * @param {res} res
-   * @returns (error)=>{handleError}
+   * @returns (error)=>{}
    */
-  handleError(res) {
+  _handleError(req, res) {
     return (error) => {
-      const err =
-        error && error.error
-          ? error.error
-          : "Something went wrong... Please try again later...";
-      const status = error && error.status ? error.status : 500;
       res.setHeader("Connection", "close");
-      res.status(status).json({
-        error: err,
-      });
+
+      if (this.handleError) {
+        // if handle error is provided then use it.
+        this.handleError(error, req, res);
+      } else {
+        // else use this error handling.
+        res.status(error?.status ?? 500).json({
+          error: error?.error ?? ERROR_MSG,
+        });
+      }
     };
+  }
+
+  /**
+   * setErrorHandler
+   * @param {(error, req, res) => { handleError }} cb
+   */
+  setErrorHandler(cb) {
+    this.handleError = cb;
   }
 
   /**

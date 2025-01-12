@@ -1,6 +1,6 @@
 {
   "name": "rover-mini-express",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "mini/light version on express.js - express clone.",
   "type": "module",
   "scripts": {},
@@ -12,8 +12,18 @@
   },
   "keywords": [
     "rover-mini-express",
-    "express-clone"
+    "express-clone",
+    "light-weight-express",
+    "harishd-rover",
+    "harishd"
   ],
   "author": "Harish D",
-  "license": "ISC"
+  "license": "ISC",
+  "contributors": [
+    "Harish D"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harishd-rover/NodeJS_PlayGround/tree/9ec1e7f84d9cb702355e7d64c1f717b59aed8d7c/Projects/Rover_Mini_Express"
+  }
 }
