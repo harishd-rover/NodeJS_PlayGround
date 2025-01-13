@@ -38,7 +38,9 @@ const uploadVideo = async (req, res, handleError) => {
     // saving video object to db.
     videoService.saveVideo(videoDbo);
 
-    res.status(200).json({ success: true });
+    res
+      .status(200)
+      .json({ status: "success", message: "File Uploaded successfully!!!" });
   } catch (error) {
     await fsPromises.rm(videoDirectory, { recursive: true });
     console.log(error);
