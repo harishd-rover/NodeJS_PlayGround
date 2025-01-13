@@ -2,15 +2,21 @@ import fs from "node:fs";
 import path from "node:path";
 
 const usersPath = path.resolve(import.meta.dirname, "../../database/users");
-const sessionsPath = path.resolve(import.meta.dirname, "../../database/sessions");
+const sessionsPath = path.resolve(
+  import.meta.dirname,
+  "../../database/sessions"
+);
+const videosPath = path.resolve(import.meta.dirname, "../../database/videos");
 
 class DBService {
   _dbInstance;
   _users;
   _sessions;
+  _vedios;
   constructor() {
     this._users = JSON.parse(fs.readFileSync(usersPath, "utf-8"));
     this._sessions = JSON.parse(fs.readFileSync(sessionsPath, "utf-8"));
+    this._vedios = JSON.parse(fs.readFileSync(videosPath, "utf-8"));
   }
 
   get users() {
@@ -19,6 +25,10 @@ class DBService {
 
   get sessions() {
     return this._sessions;
+  }
+
+  get videos() {
+    return this._vedios;
   }
 
   /**
@@ -41,6 +51,13 @@ class DBService {
       this._sessions = cb(this._sessions);
     }
     fs.writeFileSync(sessionsPath, JSON.stringify(this._sessions));
+  }
+
+  updateVideos(cb) {
+    if (cb) {
+      this._vedios = cb(this._vedios);
+    }
+    fs.writeFileSync(videosPath, JSON.stringify(this._vedios));
   }
 
   static get db() {

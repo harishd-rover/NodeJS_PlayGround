@@ -1,17 +1,13 @@
 import { extractToken } from "../services/cookies-token.service.js";
-import dataService from "../data/data.service.js";
+import usersService from "../data/users.service.js";
 import { AUTH_COOKIE } from "../services/cookies-token.service.js";
 
 const auth = (req, res, next) => {
-  if (
-    req.url.startsWith("/api") &&
-    !req.url.includes("/api/login") &&
-    !(req.url.includes("/api/videos") && req.method === "GET")
-  ) {
+  if (req.url.startsWith("/api") && !req.url.includes("/api/login")) {
     const authToken = req.cookies?.get(AUTH_COOKIE);
     if (authToken) {
       const [username, password] = extractToken(authToken);
-      const validUser = dataService.validateUser(username, password);
+      const validUser = usersService.validateUser(username, password);
 
       if (validUser) {
         req.userId = validUser.id;

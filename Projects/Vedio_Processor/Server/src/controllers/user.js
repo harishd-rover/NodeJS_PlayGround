@@ -1,9 +1,9 @@
-import dataService from "../data/data.service.js";
+import userService from "../data/users.service.js";
 import { createToken, AUTH_COOKIE } from "../services/cookies-token.service.js";
 
 const userLogin = (req, res) => {
   const { username, password } = req.body;
-  const currentUser = dataService.getUserFromUserName(username);
+  const currentUser = userService.getUserFromUserName(username);
   if (!currentUser) {
     res.status(401).json({ error: "Invalid Username" });
     return;
@@ -24,12 +24,12 @@ const userLogout = (req, res) => {
 };
 
 const getuser = (req, res) => {
-  const currentUser = dataService.getUser(req.userId);
+  const currentUser = userService.getUser(req.userId);
   res.status(200).json({ ...currentUser, password: "*******" });
 };
 
 const updateUser = async (req, res) => {
-  const modifiedUser = dataService.updateUser(
+  const modifiedUser = userService.updateUser(
     req.userId,
     req.body.name,
     req.body.username,
