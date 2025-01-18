@@ -1,6 +1,7 @@
 import path from "node:path";
 import crypto from "node:crypto";
 import fsPromises from "node:fs/promises";
+import fs from "node:fs";
 import { pipeline } from "node:stream/promises";
 import videoService from "../data/videos.service.js";
 import FFMPEG from "../services/ffmpeg.service.js";
@@ -51,9 +52,30 @@ const uploadVideo = async (req, res, handleError) => {
       .json({ status: "success", message: "File Uploaded successfully!!!" });
   } catch (error) {
     await fsPromises.rm(videoDirectory, { recursive: true });
-    console.log(error);
+    console.log("Error : ", error);
     return handleError();
   }
 };
 
-export default { getVideos, uploadVideo };
+// get-video-asset?videoId=dca82db4&type=thumbnail
+const getVedioAssets = async (req, res, handleError) => {
+  const videoId = req.params.get("videoId");
+  const assetType = req.params.get("type");
+  let assetPath;
+  try {
+    switch (assetType) {
+      case "thumbnail":
+        assetPath = `./fileSystem/${videoId}/thumbnail.jpg`;
+    }
+    if (assetPath) {
+      const fReadStream = fs.createReadStream(assetPath);
+      await pipeline(fReadStream, res, { end: false });
+    }
+    res.end();
+  } catch (error) {
+    console.log("Error : ", error);
+    return handleError();
+  }
+};
+
+export default { getVideos, uploadVideo, getVedioAssets };
