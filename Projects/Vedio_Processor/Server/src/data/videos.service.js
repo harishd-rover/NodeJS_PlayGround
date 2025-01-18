@@ -24,6 +24,15 @@ class VideoDbo {
   }
 }
 
+const SUPPORTED_VEDIO_FORMATS = new Set([
+  ".mp4",
+  ".mov",
+  ".mkv",
+  ".wmv",
+  ".avi",
+  ".webM",
+]);
+
 const getVideosByUserId = (userId) => {
   return dbService.db.videos.filter((video) => video.userId === userId);
 };
@@ -37,4 +46,10 @@ const getVideoDboByVideoId = (videoId) => {
   return dbService.db.videos.find((video) => video.videoId === videoId);
 };
 
-export default { VideoDbo, getVideosByUserId, saveVideo, getVideoDboByVideoId };
+export default {
+  VideoDbo,
+  getVideosByUserId,
+  saveVideo,
+  getVideoDboByVideoId,
+  SUPPORTED_VEDIO_FORMATS,
+};

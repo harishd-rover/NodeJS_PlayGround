@@ -14,8 +14,19 @@ const getVideos = async (req, res) => {
 
 const uploadVideo = async (req, res, handleError) => {
   const fileName = req.headers.filename;
-  const fileSize = req.headers["content-length"];
   const filePath = path.parse(fileName);
+
+  if (!videoService.SUPPORTED_VEDIO_FORMATS.has(filePath.ext)) {
+    return handleError({
+      status: 400,
+      error: `Invalid File Format. Supported Video Formats (${videoService.SUPPORTED_VEDIO_FORMATS.values().reduce(
+        (acc, curr) => acc + curr + " ",
+        ""
+      )})`,
+    });
+  }
+
+  const fileSize = req.headers["content-length"];
   const videoId = crypto.randomBytes(4).toString("hex");
   const videoDirectory = `./fileSystem/${videoId}`;
   const videoPath = `./fileSystem/${videoId}/original${filePath.ext}`;
@@ -47,7 +58,7 @@ const uploadVideo = async (req, res, handleError) => {
     const videoDbo = new videoService.VideoDbo( // create new video db object
       videoId,
       filePath.name,
-      filePath.ext.replace(".", ""),
+      filePath.ext,
       req.userId,
       false,
       {},
@@ -80,8 +91,8 @@ const getVedioAssets = async (req, res, handleError) => {
         break;
       case "original":
         const videoDbo = videoService.getVideoDboByVideoId(videoId);
-        assetPath = `./fileSystem/${videoId}/original.${videoDbo.extension}`;
-        const downloadFileName = `${videoId}-original.${videoDbo.extension}`;
+        assetPath = `./fileSystem/${videoId}/original${videoDbo.extension}`;
+        const downloadFileName = `${videoId}-original${videoDbo.extension}`;
         res.download(downloadFileName, videoDbo.size);
         break;
     }
