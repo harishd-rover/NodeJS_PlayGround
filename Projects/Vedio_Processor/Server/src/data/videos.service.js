@@ -53,10 +53,23 @@ const getVideoDboByVideoId = (videoId) => {
   return dbService.db.videos.find((video) => video.videoId === videoId);
 };
 
+const setAudioExtracted = (videoId, isExtracted) => {
+  if (videoId) {
+    dbService.db.videos.forEach((videoDbo) => {
+      if (videoDbo.videoId === videoId) {
+        videoDbo.extractedAudio = isExtracted;
+      }
+    });
+
+    dbService.db.updateVideos();
+  }
+};
+
 export default {
   VideoDbo,
   getVideosByUserId,
   saveVideo,
   getVideoDboByVideoId,
   SUPPORTED_VEDIO_FORMATS,
+  setAudioExtracted,
 };

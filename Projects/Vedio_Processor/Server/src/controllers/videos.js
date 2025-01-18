@@ -136,4 +136,42 @@ const getVedioAssets = async (req, res, handleError) => {
   }
 };
 
-export default { getVideos, uploadVideo, getVedioAssets };
+const extractAudio = async (req, res, handleError) => {
+  const videoId = req.params.get("videoId");
+  const videoDbo = videoService.getVideoDboByVideoId(videoId);
+  const originalVideoPath = `./fileSystem/${videoId}/${ASSET_TYPES.Original}${videoDbo.extension}`;
+  const audioPath = `./fileSystem/${videoId}/${ASSET_TYPES.Audio}.mp3`;
+
+  if (videoDbo.extractAudio) {
+    return handleError({
+      status: 400,
+      error: "Audio Alreaady extracted!!",
+    });
+  }
+
+  try {
+    // Extract and create audio from original audio
+    const status = await FFMPEG.createAudioFromVideo(
+      originalVideoPath,
+      audioPath
+    );
+
+    if (status[0] !== 0) {
+      await fsPromises.rm(audioPath);
+      throw new Error("Something went wrong!!");
+    }
+
+    // update Dbo
+    videoService.setAudioExtracted(videoId, true);
+
+    res.status(201).json({
+      status: "success",
+      message: "Audio Extracted Successfully!!! Ready to Download.",
+    });
+  } catch (error) {
+    console.log("Error Handler : ", error);
+    return handleError();
+  }
+};
+
+export default { getVideos, uploadVideo, getVedioAssets, extractAudio };

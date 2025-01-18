@@ -55,7 +55,21 @@ class FFMPEG {
       outputPath,
     ]);
 
-    await once(ffmpegChildProc, "close");
+    return await once(ffmpegChildProc, "close");
+  }
+
+  static async createAudioFromVideo(originalVideoPath, audioOutPath) {
+    const ffmpegChildProc = spawn("ffmpeg", [
+      "-i",
+      originalVideoPath,
+      "-q:a",
+      "0",
+      "-map",
+      "a",
+      audioOutPath,
+    ]);
+
+    return await once(ffmpegChildProc, "close");
   }
 }
 
