@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 import fsPromises from "node:fs/promises";
 import fs from "node:fs";
 import { pipeline } from "node:stream/promises";
-import videoService from "../data/videos.service.js";
+import videoService, { ASSET_TYPES } from "../data/videos.service.js";
 import FFMPEG from "../services/ffmpeg.service.js";
 
 const getVideos = async (req, res) => {
@@ -29,7 +29,7 @@ const uploadVideo = async (req, res, handleError) => {
   const fileSize = req.headers["content-length"];
   const videoId = crypto.randomBytes(4).toString("hex");
   const videoDirectory = `./fileSystem/${videoId}`;
-  const videoPath = `./fileSystem/${videoId}/original${filePath.ext}`;
+  const videoPath = `./fileSystem/${videoId}/${ASSET_TYPES.Original}${filePath.ext}`;
   try {
     //handle fileUpload
     await fsPromises.mkdir(videoDirectory);
@@ -42,7 +42,7 @@ const uploadVideo = async (req, res, handleError) => {
     const videoDimension = videoStats.dimension;
 
     // create a thumbnail from a random Video frame
-    const videoThumbnailPath = `./fileSystem/${videoId}/thumbnail.jpg`;
+    const videoThumbnailPath = `./fileSystem/${videoId}/${ASSET_TYPES.ThumbNail}.jpg`;
     const videoDuration = videoStats.duration;
     const randFrameTiming =
       Math.floor(Math.random() * Math.floor(videoDuration)) + 1;
@@ -84,22 +84,45 @@ const getVedioAssets = async (req, res, handleError) => {
   const videoId = req.params.get("videoId");
   const assetType = req.params.get("type");
   let assetPath, assetMimeType, assetSize;
+
+  const videoDbo = videoService.getVideoDboByVideoId(videoId);
+
   try {
     switch (assetType) {
-      case "thumbnail":
-        assetPath = `./fileSystem/${videoId}/thumbnail.jpg`;
+      case ASSET_TYPES.Original: {
+        assetPath = `./fileSystem/${videoId}/${ASSET_TYPES.Original}${videoDbo.extension}`;
+        assetSize = videoDbo.size;
+        assetMimeType = `video/${videoDbo.extension.replace(".", "")}`;
+        const downloadFileName = `${videoDbo.name}-original${videoDbo.extension}`;
+        res.download(downloadFileName, assetSize, assetMimeType);
+        break;
+      }
+
+      case ASSET_TYPES.ThumbNail: {
+        assetPath = `./fileSystem/${videoId}/${ASSET_TYPES.ThumbNail}.jpg`;
         assetSize = (await fsPromises.stat(assetPath)).size;
         assetMimeType = "image/jpg";
         break;
+      }
 
-      case "original":
-        const videoDbo = videoService.getVideoDboByVideoId(videoId);
-        assetPath = `./fileSystem/${videoId}/original${videoDbo.extension}`;
-        const downloadFileName = `${videoId}-original${videoDbo.extension}`;
-        assetSize = videoDbo.size;
-        assetMimeType = `video/${videoDbo.extension.replace(".", "")}`;
+      case ASSET_TYPES.Audio: {
+        assetPath = `./fileSystem/${videoId}/${ASSET_TYPES.Audio}.mp3`;
+        assetSize = (await fsPromises.stat(assetPath)).size;
+        assetMimeType = `audio/mp3`;
+        const downloadFileName = `${videoDbo.name}-audio.mp3`;
         res.download(downloadFileName, assetSize, assetMimeType);
         break;
+      }
+
+      case ASSET_TYPES.Resize: {
+        const dimension = req.params.get("dimensions");
+        assetPath = `./fileSystem/${videoId}/${dimension}${videoDbo.extension}`;
+        assetSize = (await fsPromises.stat(assetPath)).size;
+        assetMimeType = `video/${videoDbo.extension.replace(".", "")}`;
+        const downloadFileName = `${videoDbo.name}-${dimension}${videoDbo.extension}`;
+        res.download(downloadFileName, assetSize, assetMimeType);
+        break;
+      }
     }
 
     if (assetPath) {

@@ -1,5 +1,21 @@
 import { dbService } from "./database.service.js";
 
+export const ASSET_TYPES = {
+  ThumbNail: "thumbnail",
+  Original: "original",
+  Audio: "audio",
+  Resize: "resize",
+};
+
+const SUPPORTED_VEDIO_FORMATS = new Set([
+  ".mp4",
+  ".mov",
+  ".mkv",
+  ".wmv",
+  ".avi",
+  ".webM",
+]);
+
 class VideoDbo {
   constructor(
     videoId,
@@ -23,15 +39,6 @@ class VideoDbo {
     this.size = size;
   }
 }
-
-const SUPPORTED_VEDIO_FORMATS = new Set([
-  ".mp4",
-  ".mov",
-  ".mkv",
-  ".wmv",
-  ".avi",
-  ".webM",
-]);
 
 const getVideosByUserId = (userId) => {
   return dbService.db.videos.filter((video) => video.userId === userId);
