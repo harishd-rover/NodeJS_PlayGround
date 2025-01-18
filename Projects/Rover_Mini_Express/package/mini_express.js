@@ -51,15 +51,25 @@ export default class MiniExpress {
         return res;
       };
 
-      res.download = (fileName, contentLength) => {
-        if (contentLength) {
+      res.download = (fileName, size, mime_type) => {
+        if (size) {
           // To show download estimations to user.
-          res.setHeader("Content-Length", contentLength);
+          res.setHeader("Content-Length", size);
+        }
+        if (mime_type) {
+          res.setHeader("Content-Type", mime_type);
         }
         res.setHeader(
           "Content-Disposition",
           `attachment; filename=${fileName}`
         );
+        return res;
+      };
+
+      //To set Content type and content length
+      res.justifyContent = (mime_type, size) => {
+        res.setHeader("Content-Type", mime_type);
+        res.setHeader("Content-Length", size);
         return res;
       };
 
