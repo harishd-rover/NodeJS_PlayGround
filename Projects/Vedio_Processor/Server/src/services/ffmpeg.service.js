@@ -1,4 +1,4 @@
-import { spawnSync, spawn } from "node:child_process";
+import { spawn } from "node:child_process";
 import { once } from "node:events";
 
 class FFMPEG {
@@ -8,8 +8,8 @@ class FFMPEG {
    * @param {string} videoPath
    * @returns VideoStats
    */
-  static getVideoStats(videoPath) {
-    const buffer = spawnSync(
+  static async getVideoStats(videoPath) {
+    const ffmProbeChildProc = spawn(
       "ffprobe",
       [
         "-v",
@@ -22,7 +22,15 @@ class FFMPEG {
       ]
       // { cwd: process.cwd() } // by default takes parent process cwd.
     );
-    const videoProbe = JSON.parse(buffer.stdout.toString());
+
+    ffmProbeChildProc.stdout.setEncoding("utf-8");
+
+    let ffmProbeOutput = "";
+    for await (const string of ffmProbeChildProc.stdout) {
+      ffmProbeOutput += string;
+    }
+
+    const videoProbe = JSON.parse(ffmProbeOutput);
 
     const videoStream = videoProbe.streams.find(
       (stream) => stream.codec_type === "video"

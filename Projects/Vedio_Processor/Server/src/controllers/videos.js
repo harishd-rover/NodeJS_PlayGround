@@ -26,11 +26,12 @@ const uploadVideo = async (req, res, handleError) => {
     await pipeline(req, fWriteStream);
 
     // get dimentions to save in DB.
-    const videoDimension = FFMPEG.getVideoStats(videoPath).dimension;
+    const videoStats = await FFMPEG.getVideoStats(videoPath);
+    const videoDimension = videoStats.dimension;
 
-    // create random thumbnail from Video
+    // create a thumbnail from a random Video frame
     const videoThumbnailPath = `./fileSystem/${videoId}/thumbnail.jpg`;
-    const videoDuration = FFMPEG.getVideoStats(videoPath).duration;
+    const videoDuration = videoStats.duration;
     const randFrameTiming =
       Math.floor(Math.random() * Math.floor(videoDuration)) + 1;
 
@@ -60,7 +61,7 @@ const uploadVideo = async (req, res, handleError) => {
       .json({ status: "success", message: "File Uploaded successfully!!!" });
   } catch (error) {
     await fsPromises.rm(videoDirectory, { recursive: true });
-    console.log("Error : ", error);
+    console.log("Error Handler : ", error);
     return handleError();
   }
 };
@@ -81,7 +82,7 @@ const getVedioAssets = async (req, res, handleError) => {
     }
     res.end();
   } catch (error) {
-    console.log("Error : ", error);
+    console.log("Error Handler : ", error);
     return handleError();
   }
 };
