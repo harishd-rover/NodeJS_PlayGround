@@ -14,6 +14,7 @@ const getVideos = async (req, res) => {
 
 const uploadVideo = async (req, res, handleError) => {
   const fileName = req.headers.filename;
+  const fileSize = req.headers["content-length"];
   const filePath = path.parse(fileName);
   const videoId = crypto.randomBytes(4).toString("hex");
   const videoDirectory = `./fileSystem/${videoId}`;
@@ -35,7 +36,7 @@ const uploadVideo = async (req, res, handleError) => {
     const randFrameTiming =
       Math.floor(Math.random() * Math.floor(videoDuration)) + 1;
 
-    await FFMPEG.createThumbNail(
+    await FFMPEG.createVideoThumbNail(
       videoPath,
       videoThumbnailPath,
       randFrameTiming
@@ -50,7 +51,8 @@ const uploadVideo = async (req, res, handleError) => {
       req.userId,
       false,
       {},
-      videoDimension
+      videoDimension,
+      fileSize
     );
 
     // saving video object to db.
@@ -75,12 +77,18 @@ const getVedioAssets = async (req, res, handleError) => {
     switch (assetType) {
       case "thumbnail":
         assetPath = `./fileSystem/${videoId}/thumbnail.jpg`;
+        break;
+      case "original":
+        const videoDbo = videoService.getVideoDboByVideoId(videoId);
+        assetPath = `./fileSystem/${videoId}/original.${videoDbo.extension}`;
+        const downloadFileName = `${videoId}-original.${videoDbo.extension}`;
+        res.download(downloadFileName, videoDbo.size);
+        break;
     }
     if (assetPath) {
       const fReadStream = fs.createReadStream(assetPath);
-      await pipeline(fReadStream, res, { end: false });
+      await pipeline(fReadStream, res);
     }
-    res.end();
   } catch (error) {
     console.log("Error Handler : ", error);
     return handleError();

@@ -9,6 +9,7 @@ class VideoDbo {
     extractedAudio,
     resizes,
     dimensions,
+    size,
     id = dbService.db.videos.length
   ) {
     this.id = id;
@@ -19,6 +20,7 @@ class VideoDbo {
     this.extractedAudio = extractedAudio;
     this.resizes = resizes;
     this.dimensions = dimensions;
+    this.size = size;
   }
 }
 
@@ -31,4 +33,8 @@ const saveVideo = (videoDbo) => {
   dbService.db.updateVideos();
 };
 
-export default { VideoDbo, getVideosByUserId, saveVideo };
+const getVideoDboByVideoId = (videoId) => {
+  return dbService.db.videos.find((video) => video.videoId === videoId);
+};
+
+export default { VideoDbo, getVideosByUserId, saveVideo, getVideoDboByVideoId };

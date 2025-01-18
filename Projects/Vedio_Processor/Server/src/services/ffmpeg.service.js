@@ -44,7 +44,7 @@ class FFMPEG {
     return { dimension: videoDimension, duration: videoStream.duration };
   }
 
-  static async createThumbNail(videoPath, outputPath, frameTimingSec) {
+  static async createVideoThumbNail(videoPath, outputPath, frameTimingSec) {
     const ffmpegChildProc = spawn("ffmpeg", [
       "-i",
       videoPath,

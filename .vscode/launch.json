@@ -24,6 +24,14 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "VedioProcessing-Cluster",
+      "program": "${workspaceFolder}\\Projects\\Vedio_Processor\\server\\src\\cluster.js",
+      "cwd": "${workspaceFolder}\\Projects\\Vedio_Processor\\server",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "testRoverMiniExpress",
       "program": "${workspaceFolder}\\Projects\\Rover_Mini_Express\\test\\script.js",
       "cwd": "${workspaceFolder}\\Projects\\Rover_Mini_Express\\test",
