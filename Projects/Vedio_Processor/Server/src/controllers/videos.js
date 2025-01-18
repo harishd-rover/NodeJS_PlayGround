@@ -70,7 +70,7 @@ const uploadVideo = async (req, res, handleError) => {
     videoService.saveVideo(videoDbo);
 
     res
-      .status(200)
+      .status(201)
       .json({ status: "success", message: "File Uploaded successfully!!!" });
   } catch (error) {
     await fsPromises.rm(videoDirectory, { recursive: true });
@@ -83,20 +83,27 @@ const uploadVideo = async (req, res, handleError) => {
 const getVedioAssets = async (req, res, handleError) => {
   const videoId = req.params.get("videoId");
   const assetType = req.params.get("type");
-  let assetPath;
+  let assetPath, assetMimeType, assetSize;
   try {
     switch (assetType) {
       case "thumbnail":
         assetPath = `./fileSystem/${videoId}/thumbnail.jpg`;
+        assetSize = (await fsPromises.stat(assetPath)).size;
+        assetMimeType = "image/jpg";
         break;
+
       case "original":
         const videoDbo = videoService.getVideoDboByVideoId(videoId);
         assetPath = `./fileSystem/${videoId}/original${videoDbo.extension}`;
         const downloadFileName = `${videoId}-original${videoDbo.extension}`;
-        res.download(downloadFileName, videoDbo.size);
+        assetSize = videoDbo.size;
+        assetMimeType = `video/${videoDbo.extension.replace(".", "")}`;
+        res.download(downloadFileName, assetSize, assetMimeType);
         break;
     }
+
     if (assetPath) {
+      res.justifyContent(assetMimeType, assetSize);
       const fReadStream = fs.createReadStream(assetPath);
       await pipeline(fReadStream, res);
     }
