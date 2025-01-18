@@ -3,6 +3,7 @@ import crypto from "node:crypto";
 import fsPromises from "node:fs/promises";
 import { pipeline } from "node:stream/promises";
 import videoService from "../data/videos.service.js";
+import FFMPEG from "../services/ffmpeg.service.js";
 
 const getVideos = async (req, res) => {
   const userId = req.userId;
@@ -12,10 +13,11 @@ const getVideos = async (req, res) => {
 
 const uploadVideo = async (req, res, handleError) => {
   const fileName = req.headers.filename;
-  const parsedPath = path.parse(fileName);
+  const filePath = path.parse(fileName);
   const videoId = crypto.randomBytes(4).toString("hex");
   const videoDirectory = `./fileSystem/${videoId}`;
-  const videoPath = `./fileSystem/${videoId}/original${parsedPath.ext}`;
+  const videoPath = `./fileSystem/${videoId}/original${filePath.ext}`;
+  const videoThumbnailPath = `./fileSystem/${videoId}/thumbnail.jpg`;
   try {
     //handle fileUpload
     await fsPromises.mkdir(videoDirectory);
@@ -23,16 +25,22 @@ const uploadVideo = async (req, res, handleError) => {
     const fWriteStream = fHandle.createWriteStream();
     await pipeline(req, fWriteStream);
 
+    // get dimentions
+    const videoDimension = FFMPEG.getVideoDimension(videoPath);
+
+    // create thumbnail
+    await FFMPEG.createThumbNail(videoPath, videoThumbnailPath);
+
     // update Database
     // create new video db object
     const videoDbo = new videoService.VideoDbo(
       videoId,
-      parsedPath.name,
-      parsedPath.ext.replace(".", ""),
+      filePath.name,
+      filePath.ext.replace(".", ""),
       req.userId,
       false,
       {},
-      { width: 1400, height: 900 }
+      videoDimension
     );
 
     // saving video object to db.

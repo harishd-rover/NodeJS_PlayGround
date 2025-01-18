@@ -6,25 +6,25 @@ import * as stream from "node:stream";
 const pathToReadFile = path.join(import.meta.dirname, "../assets/read.txt");
 const pathToWriteFile = path.join(import.meta.dirname, "../assets/write.txt");
 
-const fileReadStream = fs.createReadStream(pathToReadFile);
-const fileWriteStream = fs.createWriteStream(pathToWriteFile);
+const fileReadStreamCumEventEmitter = fs.createReadStream(pathToReadFile);
+const fileWriteStreamCumEventEmitter = fs.createWriteStream(pathToWriteFile);
 
 //! Using the events.once(eventEmitter, 'eventName') => Promise;
 
-fileReadStream.pipe(fileWriteStream);
+fileReadStreamCumEventEmitter.pipe(fileWriteStreamCumEventEmitter);
 
 //* Alternative way to handle Readable 'end' event
 
-// fileReadStream.on('end',()=>{
+// fileReadStreamCumEventEmitter.on('end',()=>{
 //   console.log('Reading Done')
 // })
 
 (async () => {
-  await events.once(fileReadStream, "end");
+  await events.once(fileReadStreamCumEventEmitter, "end");
   console.log("Reading Done!!!");
 })();
 
-// stream.finished(fileReadStream, (error) => {
+// stream.finished(fileReadStreamCumEventEmitter, (error) => {
 //   if (error) {
 //     console.log(error.message);
 //   } else {
@@ -34,16 +34,16 @@ fileReadStream.pipe(fileWriteStream);
 
 //* Alternative way to handle Writable 'finished' event
 
-// fileWriteStream.on('finish', ()=>{
+// fileWriteStreamCumEventEmitter.on('finish', ()=>{
 //   console.log('Writing Done')
 // })
 
 // (async () => {
-//   await events.once(fileWriteStream, "finish");
+//   await events.once(fileWriteStreamCumEventEmitter, "finish");
 //   console.log("Writing Finished!!!");
 // })();
 
-stream.finished(fileWriteStream, (error) => {
+stream.finished(fileWriteStreamCumEventEmitter, (error) => {
   if (error) {
     console.log(error.message);
   } else {
