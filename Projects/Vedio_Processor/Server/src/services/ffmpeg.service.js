@@ -4,11 +4,11 @@ import { once } from "node:events";
 class FFMPEG {
   // ffmpeg/ffmprobe resolves the relative paths w.r.t cwd of the process.
   /**
-   * get the video dimensions
+   * get the video VideoStats
    * @param {string} videoPath
-   * @returns Dimension {width:number,height:number}
+   * @returns VideoStats
    */
-  static getVideoDimension(videoPath) {
+  static getVideoStats(videoPath) {
     const buffer = spawnSync(
       "ffprobe",
       [
@@ -33,15 +33,15 @@ class FFMPEG {
       height: videoStream.height,
     };
 
-    return videoDimension;
+    return { dimension: videoDimension, duration: videoStream.duration };
   }
 
-  static async createThumbNail(videoPath, outputPath) {
+  static async createThumbNail(videoPath, outputPath, frameTimingSec) {
     const ffmpegChildProc = spawn("ffmpeg", [
       "-i",
       videoPath,
       "-ss",
-      5,
+      frameTimingSec,
       "-vframes",
       1,
       outputPath,

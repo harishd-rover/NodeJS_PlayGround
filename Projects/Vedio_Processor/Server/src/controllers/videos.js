@@ -18,7 +18,6 @@ const uploadVideo = async (req, res, handleError) => {
   const videoId = crypto.randomBytes(4).toString("hex");
   const videoDirectory = `./fileSystem/${videoId}`;
   const videoPath = `./fileSystem/${videoId}/original${filePath.ext}`;
-  const videoThumbnailPath = `./fileSystem/${videoId}/thumbnail.jpg`;
   try {
     //handle fileUpload
     await fsPromises.mkdir(videoDirectory);
@@ -26,15 +25,24 @@ const uploadVideo = async (req, res, handleError) => {
     const fWriteStream = fHandle.createWriteStream();
     await pipeline(req, fWriteStream);
 
-    // get dimentions
-    const videoDimension = FFMPEG.getVideoDimension(videoPath);
+    // get dimentions to save in DB.
+    const videoDimension = FFMPEG.getVideoStats(videoPath).dimension;
 
-    // create thumbnail
-    await FFMPEG.createThumbNail(videoPath, videoThumbnailPath);
+    // create random thumbnail from Video
+    const videoThumbnailPath = `./fileSystem/${videoId}/thumbnail.jpg`;
+    const videoDuration = FFMPEG.getVideoStats(videoPath).duration;
+    const randFrameTiming =
+      Math.floor(Math.random() * Math.floor(videoDuration)) + 1;
+
+    await FFMPEG.createThumbNail(
+      videoPath,
+      videoThumbnailPath,
+      randFrameTiming
+    );
 
     // update Database
-    // create new video db object
-    const videoDbo = new videoService.VideoDbo(
+
+    const videoDbo = new videoService.VideoDbo( // create new video db object
       videoId,
       filePath.name,
       filePath.ext.replace(".", ""),
