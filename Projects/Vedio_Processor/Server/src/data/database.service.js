@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import cluster from "node:cluster";
 
 const usersPath = path.resolve(import.meta.dirname, "../../database/users");
 const sessionsPath = path.resolve(
@@ -20,14 +21,26 @@ class DBService {
   }
 
   get users() {
+    if (cluster.isWorker) {
+      // For Cluster Mode.
+      this._users = JSON.parse(fs.readFileSync(usersPath, "utf-8"));
+    }
     return this._users;
   }
 
   get sessions() {
+    if (cluster.isWorker) {
+      // For Cluster Mode.
+      this._sessions = JSON.parse(fs.readFileSync(sessionsPath, "utf-8"));
+    }
     return this._sessions;
   }
 
   get videos() {
+    if (cluster.isWorker) {
+      // For Cluster Mode.
+      this._vedios = JSON.parse(fs.readFileSync(videosPath, "utf-8"));
+    }
     return this._vedios;
   }
 

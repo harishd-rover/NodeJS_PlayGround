@@ -1,8 +1,10 @@
 import FFMPEG from "./ffmpeg.service.js";
 import videoService, { ASSET_TYPES } from "../data/videos.service.js";
 import fsPromises from "node:fs/promises";
+import cluster from "node:cluster";
 
-class JobQueue {
+export class JobQueue {
+  _jobQueueInstance = null;
   _jobs = [];
   _currentJob = null;
 
@@ -80,7 +82,6 @@ class JobQueue {
       if (status[0] !== 0) {
         throw new Error("Something went wrong.. while resizing!!!");
       }
-
       // update Db
       videoService.setResizeProcessing(videoId, dimension, false);
     } catch (error) {
@@ -95,6 +96,18 @@ class JobQueue {
       await fsPromises.rm(path);
     } catch (error) {}
   }
+
+  static get Queue() {
+    if (this._jobQueueInstance) {
+      return this._jobQueueInstance;
+    } else {
+      this._jobQueueInstance = new JobQueue();
+      return this._jobQueueInstance;
+    }
+  }
 }
 
-export const jobQueue = new JobQueue();
+// If Not in Cluster Mode. Here create an Instance to start Pending Jobs.
+if (!cluster.isWorker) {
+  JobQueue.Queue;
+}

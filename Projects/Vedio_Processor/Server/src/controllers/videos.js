@@ -5,7 +5,8 @@ import fs from "node:fs";
 import { pipeline } from "node:stream/promises";
 import videoService, { ASSET_TYPES } from "../data/videos.service.js";
 import FFMPEG from "../services/ffmpeg.service.js";
-import { jobQueue } from "../services/job-queue.service.js";
+import cluster from "node:cluster";
+import { JobQueue } from "../services/job-queue.service.js";
 
 const getVideos = async (req, res) => {
   const userId = req.userId;
@@ -201,7 +202,14 @@ const handleVideoResize = async (req, res, handleError) => {
       type: "resize",
       dimension,
     };
-    jobQueue.enqueue(newResizeJob);
+
+    // If Cluster Mode. Handover the resize Job to Master Process.
+    if (cluster.isWorker) {
+      process.send(newResizeJob);
+    } else {
+      JobQueue.Queue.enqueue(newResizeJob);
+    }
+
     // send immediate response.
     res.status(201).json({
       status: "success",
