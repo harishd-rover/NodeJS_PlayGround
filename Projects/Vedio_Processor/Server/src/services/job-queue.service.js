@@ -1,5 +1,5 @@
 import FFMPEG from "./ffmpeg.service.js";
-import videoService from "../data/videos.service.js";
+import videoService, { ASSET_TYPES } from "../data/videos.service.js";
 import fsPromises from "node:fs/promises";
 
 class JobQueue {
@@ -10,9 +10,8 @@ class JobQueue {
 
   enqueue(newJob) {
     this._jobs.push(newJob);
-    console.log("Scheduled a new Job!!!");
     console.log(
-      "Total Jobs: ",
+      "Scheduled a newJob. : ",
       this._currentJob ? this._jobs.length + 1 : this._jobs.length,
       "Pending..."
     );
@@ -50,14 +49,12 @@ class JobQueue {
   }
 
   async _doResize(resizeJob) {
-    const {
-      videoId,
-      originalVideoPath,
-      vedioOutPath,
-      width,
-      height,
-      dimension,
-    } = resizeJob;
+    const { videoId, dimension } = resizeJob;
+    const { width, height } = dimension;
+    const str_dimension = `${width}x${height}`;
+    const videoDbo = videoService.getVideoDboByVideoId(videoId);
+    const originalVideoPath = `./fileSystem/${videoId}/${ASSET_TYPES.Original}${videoDbo.extension}`;
+    const vedioOutPath = `./fileSystem/${videoId}/${str_dimension}${videoDbo.extension}`;
 
     try {
       // Resize vedio frm ffmpeg

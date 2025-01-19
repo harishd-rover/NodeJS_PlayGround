@@ -70,7 +70,9 @@ const setResizeProcessing = (videoId, dimension, isProcessing) => {
     const videoDbo = dbService.db.videos.find(
       (video) => video.videoId === videoId
     );
-    videoDbo.resizes[dimension] = { processing: isProcessing };
+    videoDbo.resizes[`${dimension.width}x${dimension.height}`] = {
+      processing: isProcessing,
+    };
     dbService.db.updateVideos();
   }
 };
@@ -81,9 +83,16 @@ const removeVideoResize = (videoId, dimension) => {
     const videoDbo = dbService.db.videos.find(
       (video) => video.videoId === videoId
     );
-    delete videoDbo.resizes[dimension];
+    delete videoDbo.resizes[`${dimension.width}x${dimension.height}`];
     dbService.db.updateVideos();
   }
+};
+
+const isVedioDimensionExists = (videoId, dimension) => {
+  const videoDbo = dbService.db.videos.find(
+    (video) => video.videoId === videoId
+  );
+  return !!videoDbo.resizes[`${dimension.width}x${dimension.height}`];
 };
 
 export default {
@@ -95,4 +104,5 @@ export default {
   setAudioExtracted,
   setResizeProcessing,
   removeVideoResize,
+  isVedioDimensionExists,
 };

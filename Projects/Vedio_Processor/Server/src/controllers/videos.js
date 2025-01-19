@@ -183,22 +183,22 @@ const extractAudio = async (req, res, handleError) => {
 // body : {videoId: "67b59585", width: "1200", height: "400"}
 const handleVideoResize = async (req, res, handleError) => {
   const { videoId, width, height } = req.body;
-  const dimension = `${width}x${height}`;
-  const videoDbo = videoService.getVideoDboByVideoId(videoId);
-  const originalVideoPath = `./fileSystem/${videoId}/${ASSET_TYPES.Original}${videoDbo.extension}`;
-  const vedioOutPath = `./fileSystem/${videoId}/${dimension}${videoDbo.extension}`;
+  const dimension = { width, height };
+
+  if (videoService.isVedioDimensionExists(videoId, dimension)) {
+    return res.status(409).json({
+      status: "conflict",
+      message: "Resize already exists, please check your resizes",
+    });
+  }
 
   try {
     // update Db
     videoService.setResizeProcessing(videoId, dimension, true);
-    // Schedule the vedio Resize with ffmpeg
+    // Schedule the vedio Resize with ffmpeg using Job Queue
     const newResizeJob = {
       videoId,
       type: "resize",
-      originalVideoPath,
-      vedioOutPath,
-      width,
-      height,
       dimension,
     };
     jobQueue.enqueue(newResizeJob);
