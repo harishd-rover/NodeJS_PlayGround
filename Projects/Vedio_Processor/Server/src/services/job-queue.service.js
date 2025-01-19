@@ -6,14 +6,23 @@ class JobQueue {
   _jobs = [];
   _currentJob = null;
 
-  constructor() {}
+  constructor() {
+    // Get pending jobs.
+    const pendingJobs = videoService.getPendingResizeJobs();
+    console.log("pending jobs: ", pendingJobs);
+
+    // Resume the pending/un-successfull resizes.
+    pendingJobs.forEach((job) => {
+      this.enqueue(job);
+    });
+  }
 
   enqueue(newJob) {
     this._jobs.push(newJob);
     console.log(
       "Scheduled a newJob. : ",
       this._currentJob ? this._jobs.length + 1 : this._jobs.length,
-      "Pending..."
+      "In a Queue..."
     );
     this._executeNext();
   }
@@ -56,6 +65,9 @@ class JobQueue {
     const originalVideoPath = `./fileSystem/${videoId}/${ASSET_TYPES.Original}${videoDbo.extension}`;
     const vedioOutPath = `./fileSystem/${videoId}/${str_dimension}${videoDbo.extension}`;
 
+    // Unlink if any unprocessed resize file existing in target location
+    await this._unLinkUnProcessedFile(vedioOutPath);
+
     try {
       // Resize vedio frm ffmpeg
       const status = await FFMPEG.createResizedVideo(
@@ -76,6 +88,12 @@ class JobQueue {
       await fsPromises.rm(vedioOutPath);
       throw error;
     }
+  }
+
+  async _unLinkUnProcessedFile(path) {
+    try {
+      await fsPromises.rm(path);
+    } catch (error) {}
   }
 }
 

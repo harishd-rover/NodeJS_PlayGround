@@ -95,6 +95,25 @@ const isVedioDimensionExists = (videoId, dimension) => {
   return !!videoDbo.resizes[`${dimension.width}x${dimension.height}`];
 };
 
+const getPendingResizeJobs = () => {
+  const pendingJobs = [];
+  dbService.db.videos.forEach((videoDbo) => {
+    Object.keys(videoDbo.resizes).forEach((dimension) => {
+      if (videoDbo.resizes[dimension].processing == true) {
+        pendingJobs.push({
+          type: "resize",
+          videoId: videoDbo.videoId,
+          dimension: {
+            width: dimension.split("x")[0],
+            height: dimension.split("x")[1],
+          },
+        });
+      }
+    });
+  });
+  return pendingJobs;
+};
+
 export default {
   VideoDbo,
   getVideosByUserId,
@@ -105,4 +124,5 @@ export default {
   setResizeProcessing,
   removeVideoResize,
   isVedioDimensionExists,
+  getPendingResizeJobs,
 };
