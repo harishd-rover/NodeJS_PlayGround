@@ -14,6 +14,7 @@
   --color-gray-dark-1: #2a2a2a;
   --color-text: #555;
   --color-green-light: #27ae5f7c;
+  --color-green-dark: #118109d7;
   --color-green: #27ae60;
   --color-blue: #3498db;
   --color-blue-dark: #2980b9;
@@ -412,21 +413,20 @@ body {
   box-shadow: 0 0 0 3px var(--button-blue-focus);
 }
 
-
 .button-green {
   color: #fff;
   background-color: var(--color-green);
   border: 1px solid var(--color-green);
 }
 
-.button-green :hover {
+.button-green:hover {
   color: #fff;
-  background-color: var(--color-green);
+  background-color: var(--color-green-dark);
   border: 1px solid var(--color-green-light);
 }
 
-.button-green :focus {
-  box-shadow: 0 0 0 3px var(--color-gray-dark-1);
+.button-green:focus {
+  box-shadow: 0 0 0 3px var(--color-green-light);
 }
 
 .button-blue:disabled {
