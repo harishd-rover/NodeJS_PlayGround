@@ -21,26 +21,20 @@ class DBService {
   }
 
   get users() {
-    if (cluster.isWorker) {
-      // For Cluster Mode.
-      this._users = JSON.parse(fs.readFileSync(usersPath, "utf-8"));
-    }
+    // For Cluster Mode.
+    this._users = JSON.parse(fs.readFileSync(usersPath, "utf-8"));
     return this._users;
   }
 
   get sessions() {
-    if (cluster.isWorker) {
-      // For Cluster Mode.
-      this._sessions = JSON.parse(fs.readFileSync(sessionsPath, "utf-8"));
-    }
+    // For Cluster Mode.
+    this._sessions = JSON.parse(fs.readFileSync(sessionsPath, "utf-8"));
     return this._sessions;
   }
 
   get videos() {
-    if (cluster.isWorker) {
-      // For Cluster Mode.
-      this._vedios = JSON.parse(fs.readFileSync(videosPath, "utf-8"));
-    }
+    // For Cluster Mode.
+    this._vedios = JSON.parse(fs.readFileSync(videosPath, "utf-8"));
     return this._vedios;
   }
 
