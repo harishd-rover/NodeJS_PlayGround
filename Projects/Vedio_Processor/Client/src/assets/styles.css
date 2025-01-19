@@ -375,6 +375,7 @@ body {
   display: flex;
   align-items: center;
   font-family: inherit;
+  min-width: 130px;
 }
 
 .button:hover {
