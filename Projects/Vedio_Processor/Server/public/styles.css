@@ -14,6 +14,7 @@
   --color-gray-dark-1: #2a2a2a;
   --color-text: #555;
   --color-green-light: #27ae5f7c;
+  --color-green-dark: #118109d7;
   --color-green: #27ae60;
   --color-blue: #3498db;
   --color-blue-dark: #2980b9;
@@ -21,8 +22,7 @@
   --color-red: #e74c3c;
   --color-red-dark: #c0392b;
   --color-red-dark-1: #98281c;
-  
-  
+
   --form-text-focus: #3498dbcb;
   --form-text-disabled: #ebebe4;
   --button-blue-disabled: #8fc2db;
@@ -169,7 +169,6 @@ body {
   margin: 0 auto;
   margin-top: 3rem;
   font-size: 1.6rem;
-
 }
 
 .profile-container form {
@@ -203,7 +202,6 @@ body {
 
   body {
     margin-left: 0;
-
   }
 }
 
@@ -351,7 +349,7 @@ body {
 }
 
 .form-text-lined.form-text--error .form-text__input:focus {
-  border-color:  var(--color-red-dark);
+  border-color: var(--color-red-dark);
   outline: 0 none;
 }
 
@@ -415,6 +413,22 @@ body {
   box-shadow: 0 0 0 3px var(--button-blue-focus);
 }
 
+.button-green {
+  color: #fff;
+  background-color: var(--color-green);
+  border: 1px solid var(--color-green);
+}
+
+.button-green:hover {
+  color: #fff;
+  background-color: var(--color-green-dark);
+  border: 1px solid var(--color-green-light);
+}
+
+.button-green:focus {
+  box-shadow: 0 0 0 3px var(--color-green-light);
+}
+
 .button-blue:disabled {
   cursor: not-allowed;
   background: var(--button-blue-disabled);
@@ -452,7 +466,6 @@ body {
 .button-blue-outlined:disabled:hover {
   border-color: var(--button-blue-disabled);
 }
-
 
 /* Button red */
 .button-red {
@@ -509,8 +522,6 @@ body {
   border-color: var(--button-red-disabled);
 }
 
-
-
 .button-small {
   padding: 1.5rem 1.2rem;
   font-size: 1.4rem;
@@ -523,89 +534,88 @@ body {
   padding: 2.2rem 2.6rem;
 }
 
-
 /* ------------- Inline Loading ------------- */
 .lds-ellipsis {
-	display: inline-block;
-	position: relative;
-	width: 2.5rem;
-	height: 0.5rem;
+  display: inline-block;
+  position: relative;
+  width: 2.5rem;
+  height: 0.5rem;
 }
 
 .lds-ellipsis div {
-	position: absolute;
-	width: 7px;
-	height: 7px;
-	border-radius: 50%;
-	background: #fff;
-	animation-timing-function: cubic-bezier(0, 1, 1, 0);
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 
 .lds-ellipsis div.lds-ellipsis--dark {
-	background: var(--color-text);
+  background: var(--color-text);
 }
 
 .lds-ellipsis div.lds-ellipsis--gray {
-	background: var(--color-gray-dark);
+  background: var(--color-gray-dark);
 }
 
 .lds-ellipsis div.lds-ellipsis--blue {
-	background: var(--color-blue);
+  background: var(--color-blue);
 }
 
 .lds-ellipsis div.lds-ellipsis--green {
-	background: var(--color-green);
+  background: var(--color-green);
 }
 
 .lds-ellipsis div.lds-ellipsis--light {
-	background: #fff;
+  background: #fff;
 }
 
 .lds-ellipsis div:nth-child(1) {
-	left: 3px;
-	animation: lds-ellipsis1 0.6s infinite;
+  left: 3px;
+  animation: lds-ellipsis1 0.6s infinite;
 }
 
 .lds-ellipsis div:nth-child(2) {
-	left: 3px;
-	animation: lds-ellipsis2 0.6s infinite;
+  left: 3px;
+  animation: lds-ellipsis2 0.6s infinite;
 }
 
 .lds-ellipsis div:nth-child(3) {
-	left: 12px;
-	animation: lds-ellipsis2 0.6s infinite;
+  left: 12px;
+  animation: lds-ellipsis2 0.6s infinite;
 }
 
 .lds-ellipsis div:nth-child(4) {
-	left: 16px;
-	animation: lds-ellipsis3 0.6s infinite;
+  left: 16px;
+  animation: lds-ellipsis3 0.6s infinite;
 }
 
 @keyframes lds-ellipsis1 {
-	0% {
-			transform: scale(0);
-	}
-	100% {
-			transform: scale(1);
-	}
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes lds-ellipsis3 {
-	0% {
-			transform: scale(1);
-	}
-	100% {
-			transform: scale(0);
-	}
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
 }
 
 @keyframes lds-ellipsis2 {
-	0% {
-			transform: translate(0, 0);
-	}
-	100% {
-			transform: translate(8px, 0);
-	}
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(8px, 0);
+  }
 }
 
 /* ------------ ALERT SNACKBAR --------------- */
@@ -635,7 +645,7 @@ body {
 }
 
 .alert-snackbar--error {
-  background-color: var(--color-red) ;
+  background-color: var(--color-red);
   color: #fff;
 }
 
@@ -690,7 +700,7 @@ body {
   display: flex;
   align-items: center;
   color: var(--color-text);
-  box-shadow: 0 1px 5px 0px rgba(0, 0, 0, 0.1)
+  box-shadow: 0 1px 5px 0px rgba(0, 0, 0, 0.1);
 }
 
 .video__thumbnail {
@@ -707,14 +717,12 @@ body {
 .video__dimensions {
   font-size: 1.8rem;
   margin-left: 2rem;
-
-
 }
 
 .video__extension {
   font-size: 2rem;
   margin-left: 2rem;
-  color: var(--color-gray-dark)
+  color: var(--color-gray-dark);
 }
 
 .video__actions {
@@ -746,7 +754,8 @@ body {
   margin-left: 2rem;
 }
 
-.resize-input input, .resize-input  .button {
+.resize-input input,
+.resize-input .button {
   height: 4rem;
 }
 
@@ -790,8 +799,6 @@ body {
 .resizes__item .button {
   margin-left: auto;
 }
-
-
 
 /* ---------- UPLOADER ---------- */
 .box__dragndrop,
@@ -837,7 +844,7 @@ body {
 .box-loading {
   display: block;
   left: 0;
-  background-color: #C9E1F1;
+  background-color: #c9e1f1;
   height: 100%;
   position: absolute;
   /* opacity: 0.5; */
@@ -874,7 +881,6 @@ body {
   transition: background 1s;
   animation: background-blue-blink 1s ease-in-out infinite;
   animation-direction: alternate;
-
 }
 
 .box.box--file-uploading .button {
@@ -923,7 +929,6 @@ body {
   padding-top: 1rem;
   align-items: center;
   z-index: 999;
-
 }
 
 .box__file-selected-msg .button {
@@ -968,8 +973,6 @@ body {
   }
 }
 
-
-
 /* ------------------- MODAL ---------------- */
 .mdl {
   position: fixed;
@@ -997,7 +1000,7 @@ body {
   border: #eee;
   animation-name: scaleIn;
   animation-duration: 0.2s;
-  color: var(--color-text)
+  color: var(--color-text);
 }
 
 @media only screen and (max-width: 1460px) {
@@ -1098,7 +1101,6 @@ body {
   margin-top: 0.8rem;
 }
 
-
 /* ANIMATIONS */
 
 @keyframes scaleIn {
@@ -1113,13 +1115,19 @@ body {
 }
 
 @keyframes text-green-blink {
-  0%		{ color: #3498db;}
-  100%	{ color: #3498db50;}
-
+  0% {
+    color: #3498db;
+  }
+  100% {
+    color: #3498db50;
+  }
 }
 
 @keyframes background-blue-blink {
-  0%		{ background: #99c8e6;}
-  100%	{ background: #99c8e6a8;}
+  0% {
+    background: #99c8e6;
+  }
+  100% {
+    background: #99c8e6a8;
+  }
 }
-

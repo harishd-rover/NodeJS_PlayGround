@@ -107,7 +107,7 @@ const UploadPhoto = (props) => {
           ) : (
             /** @API call */
             <a
-              className="button button-blue button-small"
+              className="button button-green button-small"
               href={`/get-video-asset?videoId=${props.videoId}&type=resize&dimensions=${dimensions}`}
             >
               Download

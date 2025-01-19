@@ -72,7 +72,7 @@ const Videos = () => {
             {video.extractedAudio ? (
               /** @API call */
               <a
-                className="button button-small button-blue"
+                className="button button-small button-green"
                 href={`/get-video-asset?videoId=${video.videoId}&type=audio`}
               >
                 Download Audio
@@ -92,7 +92,7 @@ const Videos = () => {
 
             {/** @API call */}
             <a
-              className="button button-small button-blue"
+              className="button button-small button-green"
               href={`/get-video-asset?videoId=${video.videoId}&type=original`}
             >
               Download Video
