@@ -55,12 +55,33 @@ const getVideoDboByVideoId = (videoId) => {
 
 const setAudioExtracted = (videoId, isExtracted) => {
   if (videoId) {
-    dbService.db.videos.forEach((videoDbo) => {
-      if (videoDbo.videoId === videoId) {
-        videoDbo.extractedAudio = isExtracted;
-      }
-    });
+    //* We can mutate the original array when using array.find() with objects
+    const videoDbo = dbService.db.videos.find(
+      (video) => video.videoId === videoId
+    );
+    videoDbo.extractedAudio = isExtracted;
+    dbService.db.updateVideos();
+  }
+};
 
+const setResizeProcessing = (videoId, dimension, isProcessing) => {
+  if (videoId) {
+    //* We can mutate the original array when using array.find() with objects
+    const videoDbo = dbService.db.videos.find(
+      (video) => video.videoId === videoId
+    );
+    videoDbo.resizes[dimension] = { processing: isProcessing };
+    dbService.db.updateVideos();
+  }
+};
+
+const removeVideoResize = (videoId, dimension) => {
+  if (videoId) {
+    //* We can mutate the original array when using array.find() with objects
+    const videoDbo = dbService.db.videos.find(
+      (video) => video.videoId === videoId
+    );
+    delete videoDbo.resizes[dimension];
     dbService.db.updateVideos();
   }
 };
@@ -72,4 +93,6 @@ export default {
   getVideoDboByVideoId,
   SUPPORTED_VEDIO_FORMATS,
   setAudioExtracted,
+  setResizeProcessing,
+  removeVideoResize,
 };

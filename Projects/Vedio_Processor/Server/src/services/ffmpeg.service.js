@@ -71,6 +71,25 @@ class FFMPEG {
 
     return await once(ffmpegChildProc, "close");
   }
+
+  static async createResizedVideo(
+    originalVideoPath,
+    vedioOutputPath,
+    width,
+    height
+  ) {
+    const ffmpegChildProc = spawn("ffmpeg", [
+      "-i",
+      originalVideoPath,
+      "-vf",
+      `scale=${width}:${height}`,
+      "-c:a",
+      "copy",
+      vedioOutputPath,
+    ]);
+
+    return await once(ffmpegChildProc, "close");
+  }
 }
 
 export default FFMPEG;

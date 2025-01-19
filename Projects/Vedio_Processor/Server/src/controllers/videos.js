@@ -174,4 +174,48 @@ const extractAudio = async (req, res, handleError) => {
   }
 };
 
-export default { getVideos, uploadVideo, getVedioAssets, extractAudio };
+// body : {videoId: "67b59585", width: "1200", height: "400"}
+const handleVideoResize = async (req, res, handleError) => {
+  const { videoId, width, height } = req.body;
+  const dimension = `${width}x${height}`;
+  const videoDbo = videoService.getVideoDboByVideoId(videoId);
+  const originalVideoPath = `./fileSystem/${videoId}/${ASSET_TYPES.Original}${videoDbo.extension}`;
+  const vedioOutPath = `./fileSystem/${videoId}/${dimension}${videoDbo.extension}`;
+
+  try {
+    // update Db
+    videoService.setResizeProcessing(videoId, dimension, true);
+    // Resize vedio frm ffmpeg
+    const status = await FFMPEG.createResizedVideo(
+      originalVideoPath,
+      vedioOutPath,
+      width,
+      height
+    );
+
+    if (status[0] !== 0) {
+      videoService.removeVideoResize(videoId, dimension);
+      await fsPromises.rm(vedioOutPath);
+      throw new Error("Something went wrong!!");
+    }
+
+    // update Db
+    videoService.setResizeProcessing(videoId, dimension, false);
+
+    res.status(201).json({
+      status: "success",
+      message: "Resize has been started!!",
+    });
+  } catch (error) {
+    console.log("Error Handler : ", error);
+    return handleError();
+  }
+};
+
+export default {
+  getVideos,
+  uploadVideo,
+  getVedioAssets,
+  extractAudio,
+  handleVideoResize,
+};
