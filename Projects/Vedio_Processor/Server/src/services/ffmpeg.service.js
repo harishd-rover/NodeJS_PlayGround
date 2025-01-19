@@ -77,12 +77,18 @@ class FFMPEG {
     return await once(ffmpegChildProc, "close");
   }
 
+  //! Note :-  As we are scheduling this resize Processes. we have to make sure this process, A LOWER PRIORIRY PROCESS.
+  //? NODE Should be our HIGHER PRIORITY PROCESS.
+  //* By Increasing the NI(nice) value of the Process, so that reducing the priority of the process.
+  //* or by Restricting the Resources for the Process by passing correct Resource/Thread/CPUs arguments.
   static async createResizedVideo(
     originalVideoPath,
     vedioOutputPath,
     width,
     height
   ) {
+    //* Without Arg :[-thread 2] -> utilizes 60-65 Threads, 100% CPU => All CPU Cores.
+    //* With    Arg :[-thread 2] -> utilizes 20-25 Threads, 20% CPU => 2 CPU Cores. Really Slow 😂
     const ffmpegChildProc = spawn("ffmpeg", [
       "-i",
       originalVideoPath,
@@ -90,6 +96,8 @@ class FFMPEG {
       `scale=${width}:${height}`,
       "-c:a",
       "copy",
+      "-threads", // Important Here...
+      "2",
       vedioOutputPath,
     ]);
 

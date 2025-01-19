@@ -9,7 +9,7 @@ class JobQueue {
   constructor() {
     // Get pending jobs.
     const pendingJobs = videoService.getPendingResizeJobs();
-    console.log("pending jobs: ", pendingJobs);
+    console.log("Pending Jobs: ", pendingJobs);
 
     // Resume the pending/un-successfull resizes.
     pendingJobs.forEach((job) => {
@@ -20,9 +20,9 @@ class JobQueue {
   enqueue(newJob) {
     this._jobs.push(newJob);
     console.log(
-      "Scheduled a newJob. : ",
+      "Scheduled a new job. : ",
       this._currentJob ? this._jobs.length + 1 : this._jobs.length,
-      "In a Queue..."
+      "Jobs in a Queue..."
     );
     this._executeNext();
   }
@@ -52,7 +52,7 @@ class JobQueue {
       default:
         break;
     }
-    console.log("Finished a Job: ", this._jobs.length, "Pending...");
+    console.log("Finished a Job: ", this._jobs.length, "Jobs Pending...");
     this._currentJob = null;
     this._executeNext();
   }
