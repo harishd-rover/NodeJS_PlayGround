@@ -5,7 +5,7 @@
     "name": "Golden-Sparrow",
     "extension": ".mp4",
     "userId": 1,
-    "extractedAudio": false,
+    "extractedAudio": true,
     "resizes": {
       "1000x1000": {
         "processing": false
