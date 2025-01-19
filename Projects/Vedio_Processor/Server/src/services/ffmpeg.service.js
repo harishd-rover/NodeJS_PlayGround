@@ -32,6 +32,8 @@ class FFMPEG {
 
     const videoProbe = JSON.parse(ffmProbeOutput);
 
+    const videoProbeDuration = videoProbe.format.duration;
+
     const videoStream = videoProbe.streams.find(
       (stream) => stream.codec_type === "video"
     );
@@ -41,7 +43,10 @@ class FFMPEG {
       height: videoStream.height,
     };
 
-    return { dimension: videoDimension, duration: videoStream.duration };
+    return {
+      dimension: videoDimension,
+      duration: videoStream.duration ?? videoProbeDuration,
+    };
   }
 
   static async createVideoThumbNail(videoPath, outputPath, frameTimingSec) {

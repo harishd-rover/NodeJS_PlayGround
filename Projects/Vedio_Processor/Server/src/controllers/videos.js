@@ -5,6 +5,7 @@ import fs from "node:fs";
 import { pipeline } from "node:stream/promises";
 import videoService, { ASSET_TYPES } from "../data/videos.service.js";
 import FFMPEG from "../services/ffmpeg.service.js";
+import { jobQueue } from "../services/job-queue.service.js";
 
 const getVideos = async (req, res) => {
   const userId = req.userId;
@@ -47,11 +48,16 @@ const uploadVideo = async (req, res, handleError) => {
     const randFrameTiming =
       Math.floor(Math.random() * Math.floor(videoDuration)) + 1;
 
-    await FFMPEG.createVideoThumbNail(
+    const status = await FFMPEG.createVideoThumbNail(
       videoPath,
       videoThumbnailPath,
       randFrameTiming
     );
+
+    if (status[0] !== 0) {
+      await fsPromises.rm(audioPath);
+      throw new Error("Something went wrong!!");
+    }
 
     // update Database
 
@@ -185,26 +191,22 @@ const handleVideoResize = async (req, res, handleError) => {
   try {
     // update Db
     videoService.setResizeProcessing(videoId, dimension, true);
-    // Resize vedio frm ffmpeg
-    const status = await FFMPEG.createResizedVideo(
+    // Schedule the vedio Resize with ffmpeg
+    const newResizeJob = {
+      videoId,
+      type: "resize",
       originalVideoPath,
       vedioOutPath,
       width,
-      height
-    );
-
-    if (status[0] !== 0) {
-      videoService.removeVideoResize(videoId, dimension);
-      await fsPromises.rm(vedioOutPath);
-      throw new Error("Something went wrong!!");
-    }
-
-    // update Db
-    videoService.setResizeProcessing(videoId, dimension, false);
-
+      height,
+      dimension,
+    };
+    jobQueue.enqueue(newResizeJob);
+    // send immediate response.
     res.status(201).json({
       status: "success",
-      message: "Resize has been started!!",
+      message:
+        "Resize has been scheduled!!! Please come and refresh page after some time.",
     });
   } catch (error) {
     console.log("Error Handler : ", error);
