@@ -107,7 +107,8 @@ export class JobQueue {
   }
 }
 
-// If Not in Cluster Mode. Here create an Instance to start Pending Jobs.
-if (!cluster.isWorker) {
+// If Not in Cluster Mode.
+// Here create an Instance to start Pending Jobs.
+if (cluster.isPrimary) {
   JobQueue.Queue;
 }

@@ -203,11 +203,11 @@ const handleVideoResize = async (req, res, handleError) => {
       dimension,
     };
 
-    // If Cluster Mode. Handover the resize Job to Master Process.
-    if (cluster.isWorker) {
-      process.send(newResizeJob);
-    } else {
+    if (cluster.isPrimary) {
       JobQueue.Queue.enqueue(newResizeJob);
+    } else {
+      // If Cluster Mode. Handover the resize Job to Master Process.
+      process.send(newResizeJob);
     }
 
     // send immediate response.

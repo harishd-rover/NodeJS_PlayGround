@@ -1,5 +1,4 @@
 import cluster from "node:cluster";
-import { JobQueue } from "../../Server/src/services/job-queue.service.js";
 
 if (cluster.isPrimary) {
   const cores_count = (await import("node:os")).availableParallelism();
@@ -14,8 +13,14 @@ if (cluster.isPrimary) {
   //## We can achieve this by, only creating the JobQueue Instance in Master Process.
   //## For scheduling jobs, Workers can communicate with Master process using Message Channels.
   //## Master will schedules the resize jobs.
+  //## Make Sure you import such singleton modules only within the Master Process in cluster mode. for any uncertain behaviours.
+  //## use (cluster.isPrimary) to check whether the process is in cluster mode.
 
-  const jobQueue = JobQueue.Queue; // To Start Pending Jobs.
+  const jobQueueService = await import(
+    "../../Server/src/services/job-queue.service.js"
+  );
+
+  const jobQueue = jobQueueService.JobQueue.Queue; // To Start Pending Jobs.
 
   cluster.on("message", (worker, message) => {
     jobQueue.enqueue(message); // Handle resize jobs.
