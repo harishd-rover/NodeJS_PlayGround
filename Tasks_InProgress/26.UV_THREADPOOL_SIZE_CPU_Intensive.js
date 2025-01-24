@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 
 import { promisify } from "node:util";
-const promifiedPbkdf2 = promisify(crypto.pbkdf2);
+const promisifiedPbkdf2 = promisify(crypto.pbkdf2);
 
 //* Crypto Operations are CPU Intensive Tasks.
 
@@ -20,7 +20,7 @@ const promifiedPbkdf2 = promisify(crypto.pbkdf2);
 //## Promise Version, Still Running Synchronously.
 
 // for (let i = 0; i < 12; i++) {
-//   const result = await promifiedPbkdf2(
+//   const result = await promisifiedPbkdf2(
 //     "secret",
 //     "salt",
 //     1_000_000,
@@ -58,7 +58,7 @@ const promifiedPbkdf2 = promisify(crypto.pbkdf2);
 
 // for (let i = 0; i < 12; i++) {
 //   (async () => {
-//     const result = await promifiedPbkdf2(
+//     const result = await promisifiedPbkdf2(
 //       "secret",
 //       "salt",
 //       1_000_000,
@@ -73,22 +73,30 @@ const promifiedPbkdf2 = promisify(crypto.pbkdf2);
 ////********************* Setting LibUV Thread Pool Size to 12. ***********************/
 //? ==>  SET UV_THREADPOOL_SIZE=12 && node 26.UV_THREADPOOL_SIZE_CPU_Intensive.js
 //## Asynchronous, it's using UV_THREAD_POOL.
-//## Increased Libuv Thread pool Size to 12.
+//## Increased the LibUV Thread Pool Size to 12.
 //## Here LibUV have 12 threads in it's UV_THREAD_POOL.
 //## 12 concurrent tasks at once.
 //## CPU usage 100% (win) 1200% (unix). 12 CPU cores utilization.
 
+// for (let i = 0; i < 12; i++) {
+//   crypto.pbkdf2("secret", "salt", 1_000_000, 512, "sha512", (error, result) => {
+//     // console.log(result);
+//     console.log("Hashed", i);
+//   });
+// }
+
+//## Promise Version
+
 for (let i = 0; i < 12; i++) {
   (async () => {
-    crypto.pbkdf2(
+    const result = await promisifiedPbkdf2(
       "secret",
       "salt",
       1_000_000,
       512,
-      "sha512",
-      (error, result) => {
-        console.log("Hashed", i);
-      }
+      "sha512"
     );
+    // console.log(result);
+    console.log("Hashed", i);
   })();
 }
