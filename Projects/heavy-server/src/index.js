@@ -31,7 +31,9 @@ apiRouter(app);
 // Handle all the errors that could happen in the routes
 app.setErrorHandler((error, req, res) => {
   if (error && error.status) {
-    res.status(error.status).json({ error: error.message });
+    res
+      .status(error.status)
+      .json({ error: error.message, message: error.message });
   } else {
     console.error(error);
     res.status(500).json({
