@@ -1,0 +1,16 @@
+{
+  "name": "heavy-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --watch src/index.js",
+    "cluster": "node src/cluster.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "rover-mini-express": "^1.1.1"
+  }
+}
