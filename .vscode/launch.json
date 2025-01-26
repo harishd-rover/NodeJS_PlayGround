@@ -42,8 +42,8 @@
       "request": "launch",
       "name": "HeavyServer",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}\\Projects\\heavy-server\\src\\index.js",
-      "cwd": "${workspaceFolder}\\Projects\\heavy-server",
+      "program": "${workspaceFolder}\\Projects\\Heavy_Server\\src\\index.js",
+      "cwd": "${workspaceFolder}\\Projects\\Heavy_Server",
       "console": "integratedTerminal"
     },
   ]
