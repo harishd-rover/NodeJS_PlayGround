@@ -3,6 +3,8 @@ const User = require("./controllers/user");
 
 const Prime = require("./controllers/prime.js");
 
+const PrimeThreadPool = require('./controllers/prime.threadpool.js')
+
 module.exports = (app) => {
   // Log a user in and give them a token
   app.route("post", "/api/login", User.logUserIn);
@@ -17,5 +19,6 @@ module.exports = (app) => {
   app.route("put", "/api/user", User.updateUser);
 
   // prime generator routes  => primes?count=12121&start=100000000000
-  app.route("get", "/api/primes", Prime.handlePrimes);
+  // app.route("get", "/api/primes", Prime.handlePrimes);
+  app.route("get", "/api/primes", PrimeThreadPool.handlePrimes);
 };

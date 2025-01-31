@@ -36,6 +36,8 @@ const handlePrimes = (req, res, handleError) => {
   //## OutSourcing the CPU Intensive Work to the New Worker Thread.
   //? Request Timers can be achieved only when the MainThread is Free.
 
+  //* If we get hundreds and thousands of concurrent requests at same time, we end up in hundreds and thousands of Threads. couses 100% CPU Usage all the time and utilizes more memory in RAM. reduces the performance and System crashes. So When we are dealing with any Asynchronous Tasks with MultiThreading we need implement Batching and Scheduling. NodeJS Internal UV_POOL does the same. When we are Implementing our own Asynchronous Tasks we need to implement Batching and Scheduling by Implementing our own ThreadPool.
+
   const worker = new Worker("./src/workers/prime-generator.js", {
     // relative path resolved w.r.t process.cwd()
     workerData: {
