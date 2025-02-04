@@ -54,7 +54,7 @@
       "program": "${workspaceFolder}\\Projects\\Heavy_Server\\lib\\threadpool.test.js",
       "cwd": "${workspaceFolder}\\Projects\\Heavy_Server",
       "console": "integratedTerminal",
-      "env": { "ROVER_POOL_SIZE": "6" }
+      "env": { "ROVER_POOL_SIZE": "12" },
     }
   ]
 }

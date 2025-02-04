@@ -1,5 +1,5 @@
 const { Worker } = require("node:worker_threads");
-
+// This is in Main Thread.
 class ThreadPool {
   _freeWorkers = [];
   _TaskQueue = [];
