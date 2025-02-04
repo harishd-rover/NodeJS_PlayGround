@@ -55,6 +55,16 @@
       "cwd": "${workspaceFolder}\\Projects\\Heavy_Server",
       "console": "integratedTerminal",
       "env": { "ROVER_POOL_SIZE": "12" },
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Rover_Pool_Test_Batch",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}\\Projects\\Heavy_Server\\lib\\threadpool.batch.test.js",
+      "cwd": "${workspaceFolder}\\Projects\\Heavy_Server",
+      "console": "integratedTerminal",
+      "env": { "ROVER_POOL_SIZE": "12" },
     }
   ]
 }
