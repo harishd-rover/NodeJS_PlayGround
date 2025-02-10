@@ -8,7 +8,10 @@ const sharedBuffer = new SharedArrayBuffer(6); // 6 bytes
 // DataTypes, Database Schema and Constraints, typedArrays, DataViews, MimeTypes in Files are used to represent the binary data.
 // These representations will have their own data encoding and decoding alogorithms used to represent and store the binary data in memory/Disk.
 
-const sharedArray = new Uint8Array(sharedBuffer); // reading binary data as Bytes array.
+const sharedArray = new Uint8Array(sharedBuffer);
+// reading binary data as 8 bit Unsigned Integer array.
+// => Each Element => (0 to 255).
+// here 6 Elements in Array.
 
 console.log("Before: ", sharedArray);
 
