@@ -21,7 +21,7 @@ const lock = new Int32Array(new SharedArrayBuffer(4));
 
 console.log("Before: ", sharedArray);
 
-var No_Workers = 6;
+var No_Workers = 50;
 
 const __SpinLockWorkerFile = resolve(
   import.meta.dirname,
@@ -41,7 +41,7 @@ const __MutexWithDeadLockWorkerFile = resolve(
 let completed = 0;
 
 for (let i = 0; i < No_Workers; i++) {
-  const worker = new Worker(__MutexWithDeadLockWorkerFile, {
+  const worker = new Worker(__MutexWorkerFile, {
     workerData: {
       data: sharedArray.buffer,
       lock: lock.buffer,

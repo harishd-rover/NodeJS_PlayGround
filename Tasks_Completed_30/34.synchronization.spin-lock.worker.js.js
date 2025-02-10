@@ -5,7 +5,7 @@ import { workerData, threadId, parentPort } from "node:worker_threads";
 const sharedArray = new Uint32Array(workerData.data);
 const lock = new Uint8Array(workerData.lock);
 
-const count = 10_000_000;
+const count = 1_000_000;
 
 for (let i = 0; i < count; i++) {
   //## => sharedArray[0] = sharedArray[0] + 1;  // With Race condtion.

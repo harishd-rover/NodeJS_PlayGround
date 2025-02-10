@@ -13,7 +13,7 @@ import { workerData, threadId, parentPort } from "node:worker_threads";
 const sharedArray = new Uint32Array(workerData.data);
 const lock = new Int32Array(workerData.lock);
 
-const count = 10_000_000;
+const count = 1_000_000;
 
 for (let i = 0; i < count; i++) {
   try {
@@ -21,11 +21,11 @@ for (let i = 0; i < count; i++) {
 
     sharedArray[0] = sharedArray[0] + 1; // access critical section.
 
-    if (i === 5_000_000) {
+    if (i === 500_000) {
       throw new Error("Hey!!! I caused the Dead Lock");
     }
 
-    // unLockAndNotify(lock); // unlock next thread
+    // unLockAndNotify(lock); // unlock next thread.. DeadLock here.
   } catch (error) {
     console.log(error.message); // got an error in thread
     console.log("Still unlocking the Thread in finally block");
