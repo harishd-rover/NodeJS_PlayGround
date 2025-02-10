@@ -16,7 +16,8 @@ const sharedArray = new Uint32Array(sharedBuffer);
 // => Each Element => (0 to 2^32).
 // here it has only 1 element in array.
 
-const lock = new Uint8Array(new SharedArrayBuffer(1));
+const lock = new Int32Array(new SharedArrayBuffer(4));
+// using typedArray Int32Array bcz Atomics.wait() and Atomics.notify() only works with Int32Array / BigInt64Array.
 
 console.log("Before: ", sharedArray);
 
@@ -35,7 +36,7 @@ const __MutexWorkerFile = resolve(
 let completed = 0;
 
 for (let i = 0; i < No_Workers; i++) {
-  const worker = new Worker(__SpinLockWorkerFile, {
+  const worker = new Worker(__MutexWorkerFile, {
     workerData: {
       data: sharedArray.buffer,
       lock: lock.buffer,

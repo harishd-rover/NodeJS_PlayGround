@@ -1,3 +1,5 @@
+//? Use 33.synchronization.js file to test this.
+
 import { workerData, threadId, parentPort } from "node:worker_threads";
 
 const sharedArray = new Uint32Array(workerData.data);
@@ -21,6 +23,7 @@ for (let i = 0; i < count; i++) {
   // critical section.
   // doing update operation on shared resource.
   sharedArray[0] = sharedArray[0] + 1;
+  // unlock
   unLock(lock);
 }
 
