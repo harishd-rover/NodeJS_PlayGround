@@ -22,15 +22,20 @@ console.log("Before: ", sharedArray);
 
 var No_Workers = 6;
 
-const __WorkerFile = resolve(
+const __SpinLockWorkerFile = resolve(
   import.meta.dirname,
-  "34.synchronization.worker.js"
+  "34.synchronization.spin-lock.worker.js"
+);
+
+const __MutexWorkerFile = resolve(
+  import.meta.dirname,
+  "35.synchronization.mutex-binary-semaphore.worker.js"
 );
 
 let completed = 0;
 
 for (let i = 0; i < No_Workers; i++) {
-  const worker = new Worker(__WorkerFile, {
+  const worker = new Worker(__SpinLockWorkerFile, {
     workerData: {
       data: sharedArray.buffer,
       lock: lock.buffer,
