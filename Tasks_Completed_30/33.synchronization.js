@@ -33,10 +33,15 @@ const __MutexWorkerFile = resolve(
   "35.synchronization.mutex-binary-semaphore.worker.js"
 );
 
+const __MutexWithDeadLockWorkerFile = resolve(
+  import.meta.dirname,
+  "36.dead-lock.serial.worker.js"
+);
+
 let completed = 0;
 
 for (let i = 0; i < No_Workers; i++) {
-  const worker = new Worker(__MutexWorkerFile, {
+  const worker = new Worker(__MutexWithDeadLockWorkerFile, {
     workerData: {
       data: sharedArray.buffer,
       lock: lock.buffer,
