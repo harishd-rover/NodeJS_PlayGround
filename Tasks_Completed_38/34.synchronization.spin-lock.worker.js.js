@@ -22,6 +22,7 @@ for (let i = 0; i < count; i++) {
   spinLock(lock);
   // critical section.
   // doing update operation on shared resource.
+  //* Pessimistic Locking.
   sharedArray[0] = sharedArray[0] + 1;
   // unlock
   unLock(lock);
