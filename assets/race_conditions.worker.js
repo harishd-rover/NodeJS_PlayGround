@@ -10,4 +10,6 @@ for (let i = 0; i < count; i++) {
   //## Eliminating race condition by using Atomics.
   //## We have only simple operations in Atomics.
   Atomics.add(sharedArray, 0, 1); // No Race Conditions with Atomics, Atomic and Isolated(Mutually Exclusive).
+  // Atomic Operations works at Binary Level/ArrayBuffer/SharedArrayBuffer/TypedArrays
+  // Atomic Operations uses the Resource Locking under the hood. to achieve mutual exclusion or Isolation or Atomicity.
 }
